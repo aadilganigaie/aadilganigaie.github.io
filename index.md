@@ -1,5 +1,4 @@
-![mypic](https://github.com/user-attachments/assets/cfadfd42-d318-4702-8a70-88e639c3beeb)
-
+<img align="left" width="120" height="120" src="https://github.com/user-attachments/assets/cfadfd42-d318-4702-8a70-88e639c3beeb" alt="Aadil Gani Ganie" style="border-radius: 50%; margin-right: 20px;">
 
 # Dr. Aadil Gani Ganie
 📍 Valencia, Spain | 📞 (+34) 605192246 | ✉ [aadilganiganie@gmail.com](mailto:aadilganiganie@gmail.com) | 🌐 [GitHub](https://github.com/aadilganigaie) | 🔗 [LinkedIn](https://www.linkedin.com/in/aadil-gani-ganie-1b0199102/)
@@ -82,12 +81,12 @@ Experienced **Computer Science Professional** and **Data Scientist**, currently 
 - **Uncertainty in Authorship: Why Perfect AI Detection Is Mathematically Impossible** ([arXiv](https://doi.org/10.48550/arXiv.2509.11915))
 - **Securing AI Agents: Role-Based Access Control for Industrial Applications** ([arXiv](https://doi.org/10.48550/arXiv.2509.11431))
 
-### **2023-2024**
-- **Enhancing Early Cancer Detection: DNA Sequences and Machine Learning** (Iraqi Journal of Science, 2024)
-- **Exploring Noise-Induced Techniques for Deep Learning Resilience** (Pollack Periodica, 2024)
-- **From Big Data to Smart Data: A Sample Gradient Descent Approach** (Springer Nature, 2023)
+### **2024**
+- **Enhancing Early Cancer Detection: DNA Sequences and Machine Learning** ([Iraqi Journal of Science](https://ijs.uobaghdad.edu.iq/index.php/ijs/article/view/4303))
+- **Exploring Noise-Induced Techniques for Deep Learning Resilience** ([Pollack Periodica](https://akjournals.com/view/journals/052/19/3/article-p8.xml))
 
-*(Full list: [Google Scholar](https://scholar.google.com/))*
+### **2023**
+- **From Big Data to Smart Data: A Sample Gradient Descent Approach** ([Springer Nature](https://journalofbigdata.springeropen.com/articles/10.1186/s40537-023-00831-5))
 
 ---
 
@@ -101,5 +100,3 @@ Experienced **Computer Science Professional** and **Data Scientist**, currently 
 ## Volunteering
 - **European Youth Project "Let's Brick"**: Monument restoration, Lavaur, France (28 days).
 - **European Youth Project "Veseli Castle"**: Castle restoration, Pocinovica, Czech Republic (14 days).
-
----
