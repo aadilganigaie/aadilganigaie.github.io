@@ -1,3 +1,6 @@
+![mypic](https://github.com/user-attachments/assets/cfadfd42-d318-4702-8a70-88e639c3beeb)
+
+
 # Dr. Aadil Gani Ganie
 📍 Valencia, Spain | 📞 (+34) 605192246 | ✉ [aadilganiganie@gmail.com](mailto:aadilganiganie@gmail.com) | 🌐 [GitHub](https://github.com/aadilganigaie) | 🔗 [LinkedIn](https://www.linkedin.com/in/aadil-gani-ganie-1b0199102/)
 
