@@ -863,6 +863,24 @@ footer{
 @keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeInRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
 
+/* LOCATION HIGHLIGHTS */
+.loc-highlight-blue{border-color:rgba(88,166,255,0.35)!important;background:rgba(88,166,255,0.07)!important}
+.loc-highlight-blue strong{color:var(--accent)}
+.loc-highlight-red{border-color:rgba(247,129,102,0.35)!important;background:rgba(247,129,102,0.07)!important}
+.loc-highlight-red strong{color:var(--accent4)}
+.loc-highlight-purple{border-color:rgba(188,140,255,0.35)!important;background:rgba(188,140,255,0.07)!important}
+.loc-highlight-purple strong{color:var(--accent2)}
+.loc-highlight-teal{border-color:rgba(56,189,248,0.35)!important;background:rgba(56,189,248,0.07)!important}
+.loc-highlight-teal strong{color:#38bdf8}
+.loc-item strong{font-weight:700}
+.loc-role-tag{
+  margin-left:auto;font-size:10px;
+  font-family:'Courier New',monospace;
+  color:var(--text-dim);white-space:nowrap;
+  padding:2px 7px;border-radius:4px;
+  background:var(--surface3);border:1px solid var(--border);
+}
+
 /* SCROLLBAR */
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
@@ -997,7 +1015,7 @@ footer{
       <span class="stat-label">Research Experience</span>
     </div>
     <div class="stat-block">
-      <span class="stat-num"><span class="counter" data-target="5">0</span></span>
+      <span class="stat-num"><span class="counter" data-target="7">0</span></span>
       <span class="stat-label">Countries</span>
     </div>
   </div>
@@ -1023,9 +1041,9 @@ footer{
         <p>
           My PhD from the <strong>University of Miskolc</strong> focused on sentiment analysis and social
           media NLP. Post-doctorate I expanded into <strong>LLMs, AI Agents, cybersecurity for industrial
-          devices</strong>, and <strong>cache-optimization with ML</strong> at UPV Spain. I have contributed
+          devices</strong>, and <strong>cache-optimization with ML</strong> at <strong>UPV, Valencia, Spain</strong>. I have contributed
           to <strong>EU-funded research projects</strong> worth over €9.83M, published across Scopus-indexed
-          journals, and collaborated with teams across Italy, Spain, Hungary, and Saudi Arabia.
+          journals, and collaborated with teams across <strong>🇮🇹 Italy</strong>, <strong>🇪🇸 Spain</strong>, <strong>🇫🇷 France</strong>, <strong>🇨🇿 Czech Republic</strong>, <strong>🇭🇺 Hungary</strong>, and <strong>🇸🇦 Saudi Arabia</strong>.
         </p>
         <p>
           My current research agenda spans <strong>LLM-driven automation</strong>, multimodal AI systems,
@@ -1036,11 +1054,13 @@ footer{
     <div class="bento-card bc-loc">
       <div class="bento-label">Global Footprint</div>
       <div class="loc-list">
-        <div class="loc-item loc-current"><span class="flag">🇸🇦</span> Dhahran, Saudi Arabia <span style="margin-left:auto;font-size:10px;color:var(--accent3)">● now</span></div>
-        <div class="loc-item"><span class="flag">🇪🇸</span> Valencia, Spain</div>
-        <div class="loc-item"><span class="flag">🇮🇹</span> Genova, Italy</div>
-        <div class="loc-item"><span class="flag">🇭🇺</span> Miskolc, Hungary</div>
-        <div class="loc-item"><span class="flag">🇮🇳</span> India</div>
+        <div class="loc-item loc-current"><span class="flag">🇸🇦</span> Dhahran, <strong>Saudi Arabia</strong> <span style="margin-left:auto;font-size:10px;color:var(--accent3)">● now</span></div>
+        <div class="loc-item loc-highlight-blue"><span class="flag">🇪🇸</span> Valencia, <strong>Spain</strong> <span class="loc-role-tag">Postdoc · UPV</span></div>
+        <div class="loc-item loc-highlight-red"><span class="flag">🇮🇹</span> Genova, <strong>Italy</strong> <span class="loc-role-tag">Research · Univ. of Genoa</span></div>
+        <div class="loc-item loc-highlight-purple"><span class="flag">🇫🇷</span> Lavaur, <strong>France</strong> <span class="loc-role-tag">EU Youth Project</span></div>
+        <div class="loc-item loc-highlight-teal"><span class="flag">🇨🇿</span> Pocinovica, <strong>Czech Republic</strong> <span class="loc-role-tag">EU Youth Project</span></div>
+        <div class="loc-item"><span class="flag">🇭🇺</span> Miskolc, <strong>Hungary</strong> <span class="loc-role-tag">PhD · TA</span></div>
+        <div class="loc-item"><span class="flag">🇮🇳</span> India <span class="loc-role-tag">BSc · MCA · IT</span></div>
       </div>
     </div>
     <div class="bento-card bc-langs">
@@ -1105,7 +1125,7 @@ footer{
         </div>
         <div class="exp-meta">
           <span>📅 Apr 2025 – Present</span>
-          <span>📍 Valencia, Spain</span>
+          <span>📍 Valencia, <strong style="color:var(--accent)">🇪🇸 Spain</strong></span>
           <span>⚡ HPC / AI</span>
         </div>
         <div class="exp-toggle-btn"><span class="toggle-arrow">▶</span> expand details</div>
@@ -1132,7 +1152,7 @@ footer{
         </div>
         <div class="exp-meta">
           <span>📅 Aug 2024 – Mar 2025</span>
-          <span>📍 Genova, Italy</span>
+          <span>📍 Genova, <strong style="color:var(--accent4)">🇮🇹 Italy</strong></span>
           <span>🔐 EU Funded</span>
         </div>
         <div class="exp-toggle-btn"><span class="toggle-arrow">▶</span> expand details</div>
@@ -1641,13 +1661,13 @@ footer{
     <div class="award-card">
       <span class="award-emoji">🧱</span>
       <div class="award-title">European Youth Project "Let's Brick"</div>
-      <div class="award-org">Lavaur, France</div>
+      <div class="award-org">🇫🇷 Lavaur, <strong style="color:var(--accent2)">France</strong></div>
       <div class="award-year">28-day Volunteering</div>
     </div>
     <div class="award-card">
       <span class="award-emoji">🏰</span>
       <div class="award-title">European Youth Project "Veseli Castle"</div>
-      <div class="award-org">Pocinovica, Czech Republic</div>
+      <div class="award-org">🇨🇿 Pocinovica, <strong style="color:var(--accent2)">Czech Republic</strong></div>
       <div class="award-year">14-day Volunteering</div>
     </div>
     <div class="award-card">
