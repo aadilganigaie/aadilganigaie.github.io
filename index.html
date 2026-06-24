@@ -5,819 +5,912 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dr. Aadil Gani Ganie | AI Researcher & Postdoc</title>
 <style>
-  :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --surface2: #1c2128;
-    --border: #30363d;
-    --accent: #58a6ff;
-    --accent2: #bc8cff;
-    --accent3: #3fb950;
-    --accent4: #f78166;
-    --accent5: #e3b341;
-    --text: #c9d1d9;
-    --text-muted: #8b949e;
-    --text-bright: #f0f6fc;
-    --purple: #7c3aed;
-    --purple-light: #a78bfa;
-  }
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════ */
+:root {
+  --bg:        #050709;
+  --bg2:       #0a0f16;
+  --surface:   #0d1117;
+  --surface2:  #161b22;
+  --surface3:  #1c2128;
+  --border:    #21262d;
+  --border2:   #30363d;
+  --accent:    #58a6ff;
+  --accent2:   #bc8cff;
+  --accent3:   #3fb950;
+  --accent4:   #f78166;
+  --accent5:   #e3b341;
+  --text:      #c9d1d9;
+  --text-dim:  #8b949e;
+  --text-bright:#f0f6fc;
+  --glow-blue: rgba(88,166,255,0.15);
+  --glow-purple:rgba(188,140,255,0.15);
+  --glow-green:rgba(63,185,80,0.15);
+  --r:10px;
+  --transition: cubic-bezier(0.23,1,0.32,1);
+}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+/* ═══════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:15px}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+  cursor:none;
+}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
 
-  html { scroll-behavior: smooth; }
+/* ═══════════════════════════════════════════════
+   CUSTOM CURSOR
+═══════════════════════════════════════════════ */
+#cursor{
+  position:fixed;width:12px;height:12px;
+  background:var(--accent);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+  mix-blend-mode:screen;
+}
+#cursor-ring{
+  position:fixed;width:40px;height:40px;
+  border:1.5px solid rgba(88,166,255,0.5);
+  border-radius:50%;pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:transform 0.12s var(--transition), width 0.3s, height 0.3s, opacity 0.3s;
+}
+body:hover #cursor-ring{opacity:1}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
+/* ═══════════════════════════════════════════════
+   SCROLL PROGRESS
+═══════════════════════════════════════════════ */
+#scroll-progress{
+  position:fixed;top:0;left:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
+  z-index:200;width:0%;transition:width 0.1s linear;
+  box-shadow:0 0 8px var(--accent);
+}
 
-  /* ── ANIMATED BG ── */
-  #particles-bg {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    overflow: hidden;
-    pointer-events: none;
-  }
-  .particle {
-    position: absolute;
-    border-radius: 50%;
-    animation: float linear infinite;
-    opacity: 0.15;
-  }
-  @keyframes float {
-    0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-    10%  { opacity: 0.15; }
-    90%  { opacity: 0.15; }
-    100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
-  }
+/* ═══════════════════════════════════════════════
+   CANVAS BG
+═══════════════════════════════════════════════ */
+#matrix-canvas{
+  position:fixed;inset:0;z-index:0;
+  opacity:0.025;pointer-events:none;
+}
+#noise-overlay{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity:0.4;
+}
 
-  /* ── MATRIX RAIN ── */
-  #matrix-canvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-    opacity: 0.03;
-    pointer-events: none;
-  }
+/* ═══════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:0 0;
+  transition:all 0.3s var(--transition);
+}
+nav.scrolled{
+  background:rgba(5,7,9,0.85);
+  backdrop-filter:blur(20px) saturate(180%);
+  border-bottom:1px solid var(--border);
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+}
+.nav-inner{
+  max-width:1140px;margin:0 auto;
+  padding:16px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-brand{
+  font-family:'Courier New',monospace;font-size:14px;
+  color:var(--accent3);font-weight:700;letter-spacing:0.5px;
+  display:flex;align-items:center;gap:8px;
+}
+.nav-brand .nb-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent3);
+  box-shadow:0 0 8px var(--accent3);
+  animation:pulse-nav 2s infinite;
+}
+@keyframes pulse-nav{0%,100%{box-shadow:0 0 4px var(--accent3)}50%{box-shadow:0 0 14px var(--accent3)}}
+.nav-links{display:flex;gap:2px;align-items:center}
+.nav-links a{
+  color:var(--text-dim);font-size:12px;
+  padding:6px 12px;border-radius:6px;
+  font-family:'Courier New',monospace;
+  transition:all 0.2s;position:relative;
+  letter-spacing:0.3px;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:2px;left:50%;right:50%;
+  height:1px;background:var(--accent);
+  transition:all 0.25s var(--transition);
+}
+.nav-links a:hover,.nav-links a.active{color:var(--accent)}
+.nav-links a:hover::after,.nav-links a.active::after{left:12px;right:12px}
+.nav-cta{
+  padding:7px 18px;border-radius:20px;
+  border:1px solid var(--accent);color:var(--accent);
+  font-size:12px;font-family:'Courier New',monospace;
+  transition:all 0.25s;cursor:none;
+}
+.nav-cta:hover{background:var(--glow-blue);box-shadow:0 0 16px rgba(88,166,255,0.2)}
 
-  /* ── LAYOUT ── */
-  .wrapper {
-    position: relative;
-    z-index: 1;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
+/* ═══════════════════════════════════════════════
+   WRAPPER
+═══════════════════════════════════════════════ */
+.wrapper{
+  position:relative;z-index:1;
+  max-width:1140px;margin:0 auto;padding:0 24px;
+}
 
-  /* ── NAV ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    background: rgba(13,17,23,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 0;
-  }
-  nav .nav-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .nav-brand {
-    font-family: 'Courier New', monospace;
-    font-size: 15px;
-    color: var(--accent3);
-    font-weight: 700;
-    letter-spacing: 1px;
-  }
-  .nav-brand span { color: var(--accent); }
-  .nav-links {
-    display: flex;
-    gap: 6px;
-    list-style: none;
-    flex-wrap: wrap;
-  }
-  .nav-links a {
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: 12px;
-    padding: 4px 10px;
-    border-radius: 6px;
-    border: 1px solid transparent;
-    transition: all 0.2s;
-    font-family: 'Courier New', monospace;
-  }
-  .nav-links a:hover {
-    color: var(--accent);
-    border-color: var(--border);
-    background: var(--surface);
-  }
+/* ═══════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════ */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  justify-content:center;padding:100px 0 60px;
+  position:relative;
+}
+.hero-grid{
+  display:grid;grid-template-columns:1fr 340px;
+  gap:48px;align-items:center;
+}
 
-  /* ── HERO ── */
-  .hero {
-    padding: 120px 0 60px;
-    border-bottom: 1px solid var(--border);
-  }
-  .hero-grid {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 40px;
-    align-items: center;
-  }
-  .terminal-window {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-    animation: fadeInUp 0.8s ease;
-  }
-  .terminal-bar {
-    background: var(--surface2);
-    padding: 10px 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-bottom: 1px solid var(--border);
-  }
-  .terminal-dot {
-    width: 12px; height: 12px;
-    border-radius: 50%;
-  }
-  .dot-red   { background: #ff5f57; }
-  .dot-yellow{ background: #febc2e; }
-  .dot-green { background: #28c840; }
-  .terminal-title {
-    margin-left: 8px;
-    font-size: 12px;
-    color: var(--text-muted);
-    font-family: 'Courier New', monospace;
-  }
-  .terminal-body {
-    padding: 20px 24px;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    line-height: 1.8;
-  }
-  .t-prompt { color: var(--accent3); }
-  .t-cmd    { color: var(--text-bright); }
-  .t-key    { color: var(--accent2); }
-  .t-val    { color: var(--accent); }
-  .t-str    { color: var(--accent5); }
-  .t-com    { color: var(--text-muted); }
-  .t-cursor {
-    display: inline-block;
-    width: 8px; height: 14px;
-    background: var(--accent3);
-    animation: blink 1s step-end infinite;
-    vertical-align: middle;
-    margin-left: 2px;
-  }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+/* glowing orbs */
+.hero::before,.hero::after{
+  content:'';position:absolute;border-radius:50%;
+  pointer-events:none;filter:blur(80px);opacity:0.12;
+  animation:orb-float 8s ease-in-out infinite;
+}
+.hero::before{
+  width:500px;height:500px;
+  background:radial-gradient(circle,var(--accent),transparent 70%);
+  top:-100px;left:-100px;
+}
+.hero::after{
+  width:400px;height:400px;
+  background:radial-gradient(circle,var(--accent2),transparent 70%);
+  bottom:0;right:-50px;animation-delay:-4s;
+}
+@keyframes orb-float{
+  0%,100%{transform:translate(0,0)}
+  33%{transform:translate(30px,-20px)}
+  66%{transform:translate(-20px,30px)}
+}
 
-  .hero-avatar-side {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    animation: fadeInRight 0.8s ease 0.2s both;
-  }
-  .avatar-frame {
-    position: relative;
-    width: 140px; height: 140px;
-  }
-  .avatar-frame::before {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    background: conic-gradient(var(--accent), var(--accent2), var(--accent3), var(--accent));
-    animation: spin 3s linear infinite;
-  }
-  .avatar-inner {
-    position: absolute;
-    inset: 4px;
-    border-radius: 50%;
-    background: var(--surface);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 52px;
-    overflow: hidden;
-  }
-  .avatar-inner img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px;border-radius:20px;
+  border:1px solid rgba(63,185,80,0.3);
+  background:rgba(63,185,80,0.06);
+  font-size:12px;color:var(--accent3);
+  font-family:'Courier New',monospace;
+  margin-bottom:20px;
+  animation:fadeInDown 0.6s ease both;
+}
+.hero-badge .blink{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--accent3);
+  animation:blink-led 1.2s step-end infinite;
+}
+@keyframes blink-led{0%,100%{opacity:1}50%{opacity:0}}
 
-  .social-links {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-  }
-  .social-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 14px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    color: var(--text);
-    text-decoration: none;
-    font-size: 12px;
-    transition: all 0.2s;
-    font-family: 'Courier New', monospace;
-  }
-  .social-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(88,166,255,0.06); }
-  .social-icon { font-size: 14px; }
+.hero-name{
+  font-size:clamp(36px,5vw,60px);
+  font-weight:800;color:var(--text-bright);
+  letter-spacing:-1px;line-height:1.1;
+  animation:fadeInUp 0.7s ease 0.1s both;
+}
+.hero-name .name-accent{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
 
-  /* ── STATS BAR ── */
-  .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    margin: 32px 0;
-    animation: fadeInUp 0.8s ease 0.3s both;
-  }
-  .stat-item {
-    background: var(--surface);
-    padding: 20px;
-    text-align: center;
-    transition: background 0.2s;
-  }
-  .stat-item:hover { background: var(--surface2); }
-  .stat-num {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--text-bright);
-    font-family: 'Courier New', monospace;
-    display: block;
-  }
-  .stat-num .counter { color: var(--accent); }
-  .stat-label {
-    font-size: 11px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 4px;
-    display: block;
-  }
+.hero-title-wrap{
+  font-size:18px;color:var(--text-dim);
+  margin:12px 0 20px;height:28px;overflow:hidden;
+  animation:fadeInUp 0.7s ease 0.2s both;
+}
+.hero-title-wrap .typed-text{color:var(--accent2);font-weight:500}
+.cursor-type{
+  display:inline-block;width:2px;height:20px;
+  background:var(--accent2);margin-left:2px;
+  animation:blink 0.8s step-end infinite;vertical-align:middle;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
-  /* ── SECTIONS ── */
-  section {
-    padding: 60px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 32px;
-  }
-  .section-icon {
-    font-size: 20px;
-    background: var(--surface2);
-    width: 40px; height: 40px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .section-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text-bright);
-    font-family: 'Courier New', monospace;
-  }
-  .section-title span { color: var(--accent2); }
-  .section-line {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(to right, var(--border), transparent);
-  }
+.hero-desc{
+  font-size:15px;color:var(--text-dim);line-height:1.8;
+  max-width:560px;margin-bottom:32px;
+  animation:fadeInUp 0.7s ease 0.3s both;
+}
+.hero-desc strong{color:var(--text)}
 
-  /* ── ABOUT ── */
-  .about-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 24px;
-    position: relative;
-    overflow: hidden;
-  }
-  .about-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 4px; height: 100%;
-    background: linear-gradient(to bottom, var(--accent), var(--accent2));
-  }
-  .about-text {
-    color: var(--text);
-    line-height: 1.8;
-    font-size: 14px;
-    padding-left: 16px;
-  }
-  .about-text strong { color: var(--accent2); }
-  .location-chips {
-    display: flex;
-    gap: 8px;
-    margin-top: 16px;
-    flex-wrap: wrap;
-    padding-left: 16px;
-  }
-  .chip {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-family: 'Courier New', monospace;
-    border: 1px solid;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .chip-blue  { background: rgba(88,166,255,0.08); border-color: rgba(88,166,255,0.3); color: var(--accent); }
-  .chip-purple{ background: rgba(188,140,255,0.08); border-color: rgba(188,140,255,0.3); color: var(--accent2); }
-  .chip-green { background: rgba(63,185,80,0.08); border-color: rgba(63,185,80,0.3); color: var(--accent3); }
+.hero-actions{
+  display:flex;gap:12px;flex-wrap:wrap;
+  animation:fadeInUp 0.7s ease 0.4s both;
+}
+.btn-primary{
+  padding:12px 28px;border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),#1a6fb5);
+  color:#fff;font-size:14px;font-weight:600;
+  border:none;cursor:none;
+  transition:all 0.3s var(--transition);
+  box-shadow:0 4px 20px rgba(88,166,255,0.3);
+  position:relative;overflow:hidden;
+}
+.btn-primary::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);
+  opacity:0;transition:opacity 0.3s;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(88,166,255,0.4)}
+.btn-primary:hover::before{opacity:1}
+.btn-outline{
+  padding:12px 28px;border-radius:8px;
+  border:1px solid var(--border2);color:var(--text);
+  font-size:14px;background:transparent;cursor:none;
+  transition:all 0.3s var(--transition);
+}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);background:var(--glow-blue)}
 
-  /* ── EXPERIENCE ── */
-  .timeline {
-    position: relative;
-    padding-left: 28px;
-  }
-  .timeline::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 8px; bottom: 8px;
-    width: 2px;
-    background: linear-gradient(to bottom, var(--accent), var(--accent2), var(--accent3));
-    border-radius: 2px;
-  }
-  .timeline-item {
-    position: relative;
-    margin-bottom: 24px;
-    animation: fadeInLeft 0.5s ease both;
-  }
-  .timeline-dot {
-    position: absolute;
-    left: -34px;
-    top: 12px;
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    border: 2px solid var(--bg);
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-    transition: all 0.2s;
-  }
-  .timeline-dot.current {
-    background: var(--accent3);
-    box-shadow: 0 0 12px var(--accent3);
-    animation: pulse-dot 2s infinite;
-  }
-  @keyframes pulse-dot {
-    0%,100%{ box-shadow: 0 0 6px var(--accent3); }
-    50%    { box-shadow: 0 0 18px var(--accent3); }
-  }
-  .exp-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px 20px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .exp-card:hover {
-    border-color: var(--accent);
-    background: var(--surface2);
-    transform: translateX(4px);
-  }
-  .exp-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .exp-role {
-    font-weight: 700;
-    color: var(--text-bright);
-    font-size: 14px;
-  }
-  .exp-company {
-    color: var(--accent);
-    font-size: 13px;
-    margin-top: 2px;
-  }
-  .exp-badge {
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    white-space: nowrap;
-    font-family: 'Courier New', monospace;
-  }
-  .badge-current { background: rgba(63,185,80,0.15); color: var(--accent3); border: 1px solid rgba(63,185,80,0.3); }
-  .badge-past    { background: rgba(139,148,158,0.1); color: var(--text-muted); border: 1px solid var(--border); }
-  .exp-meta {
-    display: flex;
-    gap: 12px;
-    margin-top: 8px;
-    font-size: 11px;
-    color: var(--text-muted);
-    font-family: 'Courier New', monospace;
-    flex-wrap: wrap;
-  }
-  .exp-meta span { display: flex; align-items: center; gap: 4px; }
-  .exp-details {
-    margin-top: 12px;
-    display: none;
-    border-top: 1px solid var(--border);
-    padding-top: 12px;
-  }
-  .exp-details.open { display: block; animation: fadeIn 0.3s ease; }
-  .exp-details ul {
-    list-style: none;
-    padding: 0;
-  }
-  .exp-details ul li {
-    padding: 3px 0 3px 16px;
-    position: relative;
-    color: var(--text);
-    font-size: 13px;
-  }
-  .exp-details ul li::before {
-    content: '▸';
-    position: absolute;
-    left: 0;
-    color: var(--accent3);
-  }
-  .exp-details p {
-    color: var(--text);
-    font-size: 13px;
-    line-height: 1.7;
-  }
-  .exp-toggle {
-    font-size: 10px;
-    color: var(--accent);
-    margin-top: 6px;
-    font-family: 'Courier New', monospace;
-    display: inline-block;
-  }
+/* SOCIAL FLOAT */
+.hero-social{
+  display:flex;gap:12px;margin-top:24px;
+  animation:fadeInUp 0.7s ease 0.5s both;
+}
+.social-icon-btn{
+  width:40px;height:40px;border-radius:10px;
+  border:1px solid var(--border2);background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;transition:all 0.25s var(--transition);cursor:none;
+}
+.social-icon-btn:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 20px rgba(88,166,255,0.2)}
 
-  /* ── EDUCATION ── */
-  .edu-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 16px;
-  }
-  .edu-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .edu-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 3px;
-  }
-  .edu-card.phd::after   { background: linear-gradient(to right, var(--accent2), var(--accent)); }
-  .edu-card.masters::after { background: linear-gradient(to right, var(--accent), var(--accent3)); }
-  .edu-card.bsc::after   { background: linear-gradient(to right, var(--accent3), var(--accent5)); }
-  .edu-card:hover {
-    border-color: var(--accent);
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(88,166,255,0.1);
-  }
-  .edu-degree { font-size: 15px; font-weight: 700; color: var(--text-bright); margin-bottom: 4px; }
-  .edu-univ   { color: var(--accent); font-size: 13px; margin-bottom: 6px; }
-  .edu-year   { color: var(--text-muted); font-size: 11px; font-family: 'Courier New', monospace; }
-  .edu-icon   { font-size: 28px; float: right; margin-top: -4px; }
+/* HERO RIGHT: AVATAR CARD */
+.hero-card{
+  position:relative;
+  animation:fadeInRight 0.8s ease 0.2s both;
+}
+.avatar-glow-ring{
+  position:relative;
+  width:220px;height:220px;margin:0 auto 24px;
+}
+.avatar-glow-ring::before{
+  content:'';position:absolute;inset:-6px;border-radius:50%;
+  background:conic-gradient(var(--accent),var(--accent2),var(--accent3),var(--accent4),var(--accent),var(--accent2));
+  animation:spin 4s linear infinite;
+  filter:blur(1px);
+}
+.avatar-glow-ring::after{
+  content:'';position:absolute;inset:-10px;border-radius:50%;
+  background:conic-gradient(var(--accent),var(--accent2),var(--accent3),var(--accent4),var(--accent),var(--accent2));
+  animation:spin 4s linear infinite;
+  filter:blur(12px);opacity:0.4;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.avatar-inner{
+  position:absolute;inset:4px;border-radius:50%;
+  background:var(--surface);
+  display:flex;align-items:center;justify-content:center;
+  font-size:80px;z-index:1;overflow:hidden;
+}
 
-  /* ── SKILLS ── */
-  .skills-container { display: flex; flex-direction: column; gap: 20px; }
-  .skill-group { }
-  .skill-group-title {
-    font-size: 12px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 10px;
-    font-family: 'Courier New', monospace;
-  }
-  .skill-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .skill-tag {
-    padding: 5px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-family: 'Courier New', monospace;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
-    cursor: default;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .skill-tag:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(188,140,255,0.06); transform: translateY(-2px); }
-  .skill-tag .tag-dot { width: 6px; height: 6px; border-radius: 50%; }
-  .dot-ai    { background: var(--accent2); }
-  .dot-ml    { background: var(--accent); }
-  .dot-cloud { background: var(--accent5); }
-  .dot-proto { background: var(--accent4); }
-  .dot-tools { background: var(--accent3); }
+.info-chips{
+  display:flex;flex-direction:column;gap:10px;
+}
+.info-chip{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-radius:10px;
+  border:1px solid var(--border);background:var(--surface2);
+  font-size:12px;transition:all 0.25s;
+  backdrop-filter:blur(4px);
+}
+.info-chip:hover{border-color:var(--border2);transform:translateX(4px)}
+.info-chip .ic-icon{font-size:16px;flex-shrink:0}
+.info-chip .ic-label{color:var(--text-dim);font-size:11px}
+.info-chip .ic-val{color:var(--text-bright);font-size:12px;font-weight:600}
 
-  /* ── PROJECTS ── */
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 16px;
-  }
-  .project-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px;
-    transition: all 0.25s;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    position: relative;
-    overflow: hidden;
-  }
-  .project-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .project-card:hover::before { opacity: 1; }
-  .project-card.cat-nlp::before   { background: linear-gradient(to right, var(--accent2), var(--accent)); }
-  .project-card.cat-llm::before   { background: linear-gradient(to right, var(--accent), var(--accent3)); }
-  .project-card.cat-cyber::before { background: linear-gradient(to right, var(--accent4), var(--accent5)); }
-  .project-card.cat-eu::before    { background: linear-gradient(to right, var(--accent5), var(--accent2)); }
-  .project-card:hover {
-    border-color: var(--accent);
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-  }
-  .project-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-  .project-name   { font-size: 14px; font-weight: 700; color: var(--text-bright); }
-  .project-desc   { font-size: 12px; color: var(--text-muted); line-height: 1.6; flex: 1; }
-  .project-footer { display: flex; align-items: center; justify-content: space-between; }
-  .project-tags   { display: flex; gap: 6px; flex-wrap: wrap; }
-  .ptag {
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 10px;
-    font-family: 'Courier New', monospace;
-    background: rgba(88,166,255,0.1);
-    color: var(--accent);
-    border: 1px solid rgba(88,166,255,0.2);
-  }
-  .project-link {
-    color: var(--accent);
-    text-decoration: none;
-    font-size: 11px;
-    font-family: 'Courier New', monospace;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    border: 1px solid rgba(88,166,255,0.2);
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .project-link:hover { background: rgba(88,166,255,0.1); border-color: var(--accent); }
-  .eu-badge {
-    background: rgba(227,179,65,0.12);
-    border: 1px solid rgba(227,179,65,0.3);
-    color: var(--accent5);
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 10px;
-    font-family: 'Courier New', monospace;
-    white-space: nowrap;
-  }
-  .project-emoji { font-size: 22px; }
+/* STATS STRIP */
+.stats-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:var(--r);
+  overflow:hidden;margin:48px 0 0;
+  animation:fadeInUp 0.7s ease 0.6s both;
+}
+.stat-block{
+  background:var(--surface);padding:24px 20px;
+  text-align:center;transition:background 0.2s;position:relative;
+  overflow:hidden;
+}
+.stat-block::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--glow-blue),transparent);
+  opacity:0;transition:opacity 0.3s;
+}
+.stat-block:hover{background:var(--surface2)}
+.stat-block:hover::before{opacity:1}
+.stat-num{
+  font-size:32px;font-weight:800;
+  font-family:'Courier New',monospace;
+  display:block;margin-bottom:4px;
+  background:linear-gradient(135deg,var(--text-bright),var(--accent));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.stat-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px}
 
-  /* ── PUBLICATIONS ── */
-  .pub-list { display: flex; flex-direction: column; gap: 12px; }
-  .pub-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px 18px;
-    transition: all 0.2s;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 14px;
-    align-items: flex-start;
-  }
-  .pub-card:hover {
-    border-color: var(--border);
-    background: var(--surface2);
-    transform: translateX(4px);
-  }
-  .pub-year-badge {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-size: 11px;
-    color: var(--text-muted);
-    font-family: 'Courier New', monospace;
-    white-space: nowrap;
-    text-align: center;
-    min-width: 40px;
-  }
-  .pub-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-bright);
-    margin-bottom: 4px;
-    line-height: 1.5;
-  }
-  .pub-meta { font-size: 11px; color: var(--text-muted); }
-  .pub-meta .pub-journal { color: var(--accent2); }
-  .pub-meta .pub-index {
-    display: inline-block;
-    margin-left: 6px;
-    padding: 1px 6px;
-    border-radius: 3px;
-    font-size: 10px;
-    background: rgba(63,185,80,0.1);
-    color: var(--accent3);
-    border: 1px solid rgba(63,185,80,0.2);
-  }
-  .pub-meta .pub-if {
-    display: inline-block;
-    margin-left: 4px;
-    padding: 1px 6px;
-    border-radius: 3px;
-    font-size: 10px;
-    background: rgba(227,179,65,0.08);
-    color: var(--accent5);
-    border: 1px solid rgba(227,179,65,0.2);
-  }
+/* ═══════════════════════════════════════════════
+   SECTION BASE
+═══════════════════════════════════════════════ */
+section{padding:80px 0;position:relative}
+.sec-header{
+  display:flex;align-items:center;gap:16px;margin-bottom:48px;
+}
+.sec-tag{
+  font-family:'Courier New',monospace;font-size:11px;
+  color:var(--accent2);letter-spacing:2px;text-transform:uppercase;
+  padding:4px 10px;border-radius:4px;
+  border:1px solid rgba(188,140,255,0.3);
+  background:rgba(188,140,255,0.06);
+}
+.sec-title{
+  font-size:28px;font-weight:800;color:var(--text-bright);
+  letter-spacing:-0.5px;
+}
+.sec-title span{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.sec-line{flex:1;height:1px;background:linear-gradient(to right,var(--border2),transparent)}
 
-  /* ── AWARDS ── */
-  .awards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 16px;
-  }
-  .award-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-    transition: all 0.2s;
-  }
-  .award-card:hover { border-color: var(--accent5); transform: translateY(-4px); box-shadow: 0 8px 24px rgba(227,179,65,0.1); }
-  .award-emoji { font-size: 32px; margin-bottom: 10px; display: block; }
-  .award-title { font-size: 13px; font-weight: 700; color: var(--text-bright); margin-bottom: 4px; }
-  .award-org   { font-size: 12px; color: var(--accent); }
-  .award-year  { font-size: 11px; color: var(--text-muted); margin-top: 4px; font-family: 'Courier New', monospace; }
+/* ═══════════════════════════════════════════════
+   ABOUT  — BENTO GRID
+═══════════════════════════════════════════════ */
+.bento{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  grid-template-rows:auto;
+  gap:16px;
+}
+.bento-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:24px;
+  transition:all 0.35s var(--transition);
+  position:relative;overflow:hidden;
+}
+.bento-card::before{
+  content:'';position:absolute;inset:0;opacity:0;
+  transition:opacity 0.35s;
+}
+.bento-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,0.4)}
+.bento-card:hover::before{opacity:1}
 
-  /* ── CONTRIBUTION GRAPH ── */
-  .contrib-section { }
-  .contrib-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .contrib-title  { font-size: 13px; color: var(--text-muted); font-family: 'Courier New', monospace; }
-  .contrib-graph  {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-    overflow-x: auto;
-  }
-  .contrib-grid {
-    display: flex;
-    gap: 3px;
-  }
-  .contrib-col {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .contrib-cell {
-    width: 12px; height: 12px;
-    border-radius: 2px;
-    transition: all 0.15s;
-    cursor: pointer;
-  }
-  .contrib-cell:hover { transform: scale(1.5); z-index: 10; position: relative; }
-  .c0 { background: var(--surface2); }
-  .c1 { background: #0e4429; }
-  .c2 { background: #006d32; }
-  .c3 { background: #26a641; }
-  .c4 { background: #39d353; }
-  .contrib-legend { display: flex; align-items: center; gap: 4px; margin-top: 12px; font-size: 11px; color: var(--text-muted); justify-content: flex-end; }
-  .contrib-legend .contrib-cell { cursor: default; }
-  .contrib-legend .contrib-cell:hover { transform: none; }
+.bc-main{grid-column:span 8;grid-row:span 2}
+.bc-main::before{background:linear-gradient(135deg,var(--glow-blue),transparent 60%)}
+.bc-loc{grid-column:span 4}
+.bc-loc::before{background:linear-gradient(135deg,var(--glow-green),transparent 60%)}
+.bc-langs{grid-column:span 4}
+.bc-langs::before{background:linear-gradient(135deg,var(--glow-purple),transparent 60%)}
+.bc-about-text{font-size:14px;color:var(--text);line-height:1.9}
+.bc-about-text strong{color:var(--accent2)}
+.bc-about-text p+p{margin-top:12px}
+.bento-label{
+  font-size:10px;color:var(--text-dim);text-transform:uppercase;
+  letter-spacing:2px;font-family:'Courier New',monospace;
+  margin-bottom:14px;display:flex;align-items:center;gap:6px;
+}
+.bento-label::before{content:'';width:16px;height:1px;background:var(--border2)}
+.loc-list{display:flex;flex-direction:column;gap:8px}
+.loc-item{
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;color:var(--text);
+  padding:8px 12px;border-radius:8px;
+  background:var(--surface2);border:1px solid transparent;
+  transition:border-color 0.2s;
+}
+.loc-item:hover{border-color:var(--border2)}
+.loc-item .flag{font-size:18px}
+.loc-current{border-color:rgba(63,185,80,0.3)!important;color:var(--accent3)}
+.lang-tags{display:flex;flex-wrap:wrap;gap:8px}
+.lang-tag{
+  padding:6px 14px;border-radius:20px;font-size:12px;
+  border:1px solid var(--border2);background:var(--surface2);
+  color:var(--text);transition:all 0.2s;cursor:default;
+}
+.lang-tag:hover{border-color:var(--accent2);color:var(--accent2)}
 
-  /* ── FOOTER ── */
-  footer {
-    padding: 40px 0;
-    text-align: center;
-  }
-  .footer-brand {
-    font-family: 'Courier New', monospace;
-    font-size: 14px;
-    color: var(--text-muted);
-    margin-bottom: 12px;
-  }
-  .footer-brand span { color: var(--accent3); }
-  .footer-tech { font-size: 11px; color: var(--text-muted); }
-  .footer-tech span { color: var(--accent2); }
+/* ═══════════════════════════════════════════════
+   EXPERIENCE — 3D TILT TIMELINE
+═══════════════════════════════════════════════ */
+.timeline{position:relative;padding-left:32px}
+.timeline::before{
+  content:'';position:absolute;left:6px;top:8px;bottom:8px;
+  width:2px;border-radius:2px;
+  background:linear-gradient(to bottom,var(--accent),var(--accent2),var(--accent3));
+}
+.tl-item{position:relative;margin-bottom:20px}
+.tl-dot{
+  position:absolute;left:-38px;top:20px;
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid var(--bg);background:var(--accent);
+  box-shadow:0 0 10px var(--accent);transition:all 0.3s;
+}
+.tl-dot.active{background:var(--accent3);box-shadow:0 0 16px var(--accent3);animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 8px var(--accent3)}50%{box-shadow:0 0 20px var(--accent3),0 0 40px rgba(63,185,80,0.3)}}
 
-  /* ── ANIMATIONS ── */
-  @keyframes fadeInUp    { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes fadeInRight { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
-  @keyframes fadeInLeft  { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
-  @keyframes fadeIn      { from{opacity:0} to{opacity:1} }
+.exp-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px 22px;
+  cursor:pointer;transition:all 0.3s var(--transition);
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+.exp-card:hover{border-color:var(--border2);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+.exp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.exp-role{font-size:15px;font-weight:700;color:var(--text-bright)}
+.exp-company{color:var(--accent);font-size:13px;margin-top:3px}
+.exp-badge{
+  padding:4px 12px;border-radius:20px;font-size:11px;
+  white-space:nowrap;font-family:'Courier New',monospace;flex-shrink:0;
+}
+.badge-now{background:rgba(63,185,80,0.12);color:var(--accent3);border:1px solid rgba(63,185,80,0.3)}
+.badge-old{background:rgba(139,148,158,0.08);color:var(--text-dim);border:1px solid var(--border)}
+.exp-meta{
+  display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;
+  font-size:11px;color:var(--text-dim);font-family:'Courier New',monospace;
+}
+.exp-meta span{display:flex;align-items:center;gap:4px}
+.exp-toggle-btn{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;color:var(--accent);margin-top:10px;
+  font-family:'Courier New',monospace;width:fit-content;
+}
+.exp-toggle-btn .toggle-arrow{transition:transform 0.3s var(--transition)}
+.exp-toggle-btn.open .toggle-arrow{transform:rotate(90deg)}
+.exp-details{
+  display:none;border-top:1px solid var(--border);
+  margin-top:14px;padding-top:14px;
+  animation:slideDown 0.3s ease;
+}
+.exp-details.open{display:block}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.exp-details ul li{
+  padding:4px 0 4px 18px;position:relative;
+  font-size:13px;color:var(--text);line-height:1.7;
+}
+.exp-details ul li::before{content:'▸';position:absolute;left:0;color:var(--accent3);font-size:11px;top:6px}
+.exp-details p{font-size:13px;color:var(--text);line-height:1.8}
 
-  .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
+/* ═══════════════════════════════════════════════
+   EDUCATION
+═══════════════════════════════════════════════ */
+.edu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.edu-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:24px;
+  transition:all 0.35s var(--transition);
+  position:relative;overflow:hidden;cursor:default;
+}
+.edu-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;
+  height:3px;transition:height 0.3s;
+}
+.edu-card.phd::after{background:linear-gradient(to right,var(--accent2),var(--accent))}
+.edu-card.mca::after{background:linear-gradient(to right,var(--accent),var(--accent3))}
+.edu-card.bsc::after{background:linear-gradient(to right,var(--accent3),var(--accent5))}
+.edu-card:hover{border-color:var(--border2);transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.4)}
+.edu-card:hover::after{height:4px}
+.edu-icon-wrap{
+  width:52px;height:52px;border-radius:12px;
+  background:var(--surface2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;margin-bottom:16px;
+}
+.edu-degree{font-size:15px;font-weight:700;color:var(--text-bright);margin-bottom:6px}
+.edu-univ{color:var(--accent);font-size:13px;margin-bottom:8px}
+.edu-year{font-size:11px;color:var(--text-dim);font-family:'Courier New',monospace}
+.edu-tags{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+.edu-tag{
+  padding:3px 10px;border-radius:4px;font-size:10px;
+  background:rgba(188,140,255,0.08);color:var(--accent2);
+  border:1px solid rgba(188,140,255,0.2);font-family:'Courier New',monospace;
+}
 
-  /* ── SCROLLBAR ── */
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+/* ═══════════════════════════════════════════════
+   SKILLS — ANIMATED BARS
+═══════════════════════════════════════════════ */
+.skills-layout{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.skill-group-title{
+  font-size:11px;color:var(--text-dim);text-transform:uppercase;
+  letter-spacing:2px;margin-bottom:16px;
+  font-family:'Courier New',monospace;display:flex;align-items:center;gap:8px;
+}
+.skill-group-title span{
+  width:20px;height:1px;background:var(--border2);display:inline-block;
+}
+.skill-bar-row{margin-bottom:14px}
+.skill-bar-meta{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:6px;font-size:12px;
+}
+.skill-bar-name{color:var(--text)}
+.skill-bar-pct{color:var(--text-dim);font-family:'Courier New',monospace;font-size:11px}
+.skill-bar-track{
+  height:4px;background:var(--surface2);border-radius:4px;overflow:hidden;
+}
+.skill-bar-fill{
+  height:100%;border-radius:4px;width:0%;
+  transition:width 1.2s var(--transition);
+}
+.fill-blue  {background:linear-gradient(to right,var(--accent),#1a6fb5)}
+.fill-purple{background:linear-gradient(to right,var(--accent2),#7c3aed)}
+.fill-green {background:linear-gradient(to right,var(--accent3),#15803d)}
+.fill-orange{background:linear-gradient(to right,var(--accent5),var(--accent4))}
 
-  /* ── TOOLTIP ── */
-  [data-tip] { position: relative; }
-  [data-tip]:hover::after {
-    content: attr(data-tip);
-    position: absolute;
-    bottom: calc(100% + 6px);
-    left: 50%; transform: translateX(-50%);
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-size: 10px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-    pointer-events: none;
-    z-index: 999;
-    font-family: 'Courier New', monospace;
-  }
+.tag-cloud{
+  display:flex;flex-wrap:wrap;gap:8px;
+}
+.skill-tag{
+  padding:6px 14px;border-radius:8px;font-size:12px;
+  font-family:'Courier New',monospace;
+  border:1px solid var(--border);background:var(--surface);
+  color:var(--text);transition:all 0.25s var(--transition);
+  display:flex;align-items:center;gap:6px;cursor:default;
+}
+.skill-tag .td{width:6px;height:6px;border-radius:50%}
+.skill-tag:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.3)}
+.skill-tag.t-ai:hover{border-color:var(--accent2);color:var(--accent2);background:rgba(188,140,255,0.06)}
+.skill-tag.t-ml:hover{border-color:var(--accent);color:var(--accent);background:var(--glow-blue)}
+.skill-tag.t-cloud:hover{border-color:var(--accent5);color:var(--accent5);background:rgba(227,179,65,0.06)}
+.skill-tag.t-iot:hover{border-color:var(--accent4);color:var(--accent4);background:rgba(247,129,102,0.06)}
+.skill-tag.t-tools:hover{border-color:var(--accent3);color:var(--accent3);background:var(--glow-green)}
 
-  @media(max-width: 700px) {
-    .hero-grid { grid-template-columns: 1fr; }
-    .hero-avatar-side { flex-direction: row; justify-content: flex-start; }
-    .avatar-frame { width: 80px; height: 80px; }
-    .avatar-inner { font-size: 32px; }
-    .stats-bar { grid-template-columns: repeat(2,1fr); }
-    .social-links { flex-direction: row; flex-wrap: wrap; }
-    .social-btn { flex: 1; min-width: 140px; }
-    .nav-links { display: none; }
-  }
+/* ═══════════════════════════════════════════════
+   CONTRIBUTION GRAPH
+═══════════════════════════════════════════════ */
+.contrib-wrap{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:28px;overflow-x:auto;
+}
+.contrib-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:20px;flex-wrap:wrap;gap:12px;
+}
+.contrib-stat{
+  font-family:'Courier New',monospace;font-size:13px;color:var(--text-dim);
+}
+.contrib-stat strong{color:var(--accent3)}
+.contrib-months{
+  display:flex;gap:3px;font-size:10px;color:var(--text-dim);
+  font-family:'Courier New',monospace;margin-bottom:4px;
+  padding-left:2px;
+}
+.contrib-month-label{min-width:52px}
+.contrib-grid{display:flex;gap:3px}
+.contrib-col{display:flex;flex-direction:column;gap:3px}
+.c-cell{
+  width:13px;height:13px;border-radius:3px;
+  transition:all 0.15s;cursor:pointer;
+  position:relative;
+}
+.c-cell:hover{transform:scale(1.4);z-index:10}
+.c0{background:var(--surface2)}
+.c1{background:#0e4429}
+.c2{background:#006d32}
+.c3{background:#26a641}
+.c4{background:#39d353}
+.contrib-legend{
+  display:flex;align-items:center;gap:4px;
+  font-size:11px;color:var(--text-dim);
+  justify-content:flex-end;margin-top:8px;
+}
+
+/* TOOLTIP */
+[data-tip]{position:relative}
+[data-tip]:hover::after{
+  content:attr(data-tip);
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:var(--surface3);border:1px solid var(--border2);
+  color:var(--text);font-size:10px;padding:5px 10px;border-radius:6px;
+  white-space:nowrap;pointer-events:none;z-index:999;
+  font-family:'Courier New',monospace;
+  box-shadow:0 4px 16px rgba(0,0,0,0.4);
+}
+
+/* ═══════════════════════════════════════════════
+   PROJECTS — GLASSMORPHISM CARDS
+═══════════════════════════════════════════════ */
+.projects-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
+  gap:16px;
+}
+.proj-card{
+  background:rgba(22,27,34,0.8);
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:22px;display:flex;flex-direction:column;gap:14px;
+  transition:all 0.35s var(--transition);
+  position:relative;overflow:hidden;
+  backdrop-filter:blur(8px);
+  transform-style:preserve-3d;will-change:transform;
+}
+.proj-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  opacity:0;transition:opacity 0.3s;
+}
+.proj-card:hover{
+  border-color:var(--border2);
+  transform:translateY(-6px);
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.proj-card:hover::before{opacity:1}
+.proj-card.p-nlp::before{background:linear-gradient(to right,var(--accent2),var(--accent))}
+.proj-card.p-llm::before{background:linear-gradient(to right,var(--accent),var(--accent3))}
+.proj-card.p-cyber::before{background:linear-gradient(to right,var(--accent4),var(--accent5))}
+.proj-card.p-eu::before{background:linear-gradient(to right,var(--accent5),var(--accent2))}
+
+/* hover shimmer */
+.proj-card::after{
+  content:'';position:absolute;
+  top:-100%;left:-60%;
+  width:40%;height:300%;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,0.03),transparent);
+  transition:top 0.5s var(--transition),left 0.5s var(--transition);
+}
+.proj-card:hover::after{top:-100%;left:120%}
+
+.proj-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.proj-emoji{font-size:28px;line-height:1}
+.eu-badge{
+  padding:3px 10px;border-radius:4px;font-size:10px;
+  font-family:'Courier New',monospace;
+  background:rgba(227,179,65,0.1);color:var(--accent5);
+  border:1px solid rgba(227,179,65,0.25);white-space:nowrap;
+}
+.proj-name{font-size:15px;font-weight:700;color:var(--text-bright)}
+.proj-desc{font-size:12px;color:var(--text-dim);line-height:1.7;flex:1}
+.proj-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.proj-tags{display:flex;gap:6px;flex-wrap:wrap}
+.ptag{
+  padding:3px 9px;border-radius:4px;font-size:10px;
+  font-family:'Courier New',monospace;
+  background:rgba(88,166,255,0.08);color:var(--accent);
+  border:1px solid rgba(88,166,255,0.18);
+}
+.proj-link{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;color:var(--accent);
+  font-family:'Courier New',monospace;
+  padding:5px 10px;border-radius:6px;
+  border:1px solid rgba(88,166,255,0.2);
+  transition:all 0.2s;white-space:nowrap;
+}
+.proj-link:hover{background:var(--glow-blue);border-color:var(--accent)}
+
+/* ═══════════════════════════════════════════════
+   PUBLICATIONS
+═══════════════════════════════════════════════ */
+.pub-filters{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.pub-filter-btn{
+  padding:6px 16px;border-radius:20px;font-size:12px;
+  border:1px solid var(--border);background:transparent;
+  color:var(--text-dim);cursor:none;transition:all 0.2s;
+  font-family:'Courier New',monospace;
+}
+.pub-filter-btn.active,.pub-filter-btn:hover{
+  border-color:var(--accent);color:var(--accent);background:var(--glow-blue);
+}
+.pub-list{display:flex;flex-direction:column;gap:10px}
+.pub-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:16px 20px;
+  display:grid;grid-template-columns:56px 1fr;gap:16px;
+  align-items:flex-start;transition:all 0.25s var(--transition);
+  position:relative;overflow:hidden;
+}
+.pub-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(to bottom,var(--accent),var(--accent2));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 0.3s var(--transition);
+}
+.pub-card:hover{border-color:var(--border2);transform:translateX(4px)}
+.pub-card:hover::before{transform:scaleX(1)}
+.pub-year{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:6px;padding:6px 8px;font-size:12px;
+  color:var(--text-dim);font-family:'Courier New',monospace;
+  text-align:center;align-self:start;
+}
+.pub-title{font-size:13px;font-weight:600;color:var(--text-bright);margin-bottom:5px;line-height:1.5}
+.pub-meta{font-size:11px;color:var(--text-dim);display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.pub-journal{color:var(--accent2)}
+.pub-badge{
+  padding:2px 7px;border-radius:3px;font-size:10px;
+}
+.pb-scopus{background:rgba(63,185,80,0.08);color:var(--accent3);border:1px solid rgba(63,185,80,0.2)}
+.pb-if{background:rgba(227,179,65,0.08);color:var(--accent5);border:1px solid rgba(227,179,65,0.2)}
+.pb-preprint{background:rgba(88,166,255,0.08);color:var(--accent);border:1px solid rgba(88,166,255,0.2)}
+.pub-card.hidden{display:none}
+
+/* ═══════════════════════════════════════════════
+   AWARDS
+═══════════════════════════════════════════════ */
+.awards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.award-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:24px;text-align:center;
+  transition:all 0.35s var(--transition);
+  position:relative;overflow:hidden;
+}
+.award-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 0%,rgba(227,179,65,0.08),transparent 60%);
+  opacity:0;transition:opacity 0.3s;
+}
+.award-card:hover{border-color:rgba(227,179,65,0.3);transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,0.4)}
+.award-card:hover::before{opacity:1}
+.award-emoji{font-size:36px;display:block;margin-bottom:12px;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+.award-title{font-size:13px;font-weight:700;color:var(--text-bright);margin-bottom:6px;line-height:1.4}
+.award-org{font-size:12px;color:var(--accent);margin-bottom:4px}
+.award-year{font-size:11px;color:var(--text-dim);font-family:'Courier New',monospace}
+
+/* ═══════════════════════════════════════════════
+   TERMINAL SECTION
+═══════════════════════════════════════════════ */
+.terminal-section{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.term-bar{
+  background:var(--surface2);padding:12px 16px;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--border);
+}
+.term-dot{width:12px;height:12px;border-radius:50%}
+.td-red{background:#ff5f57}.td-yellow{background:#febc2e}.td-green{background:#28c840}
+.term-title{
+  margin-left:8px;font-size:12px;color:var(--text-dim);
+  font-family:'Courier New',monospace;flex:1;text-align:center;
+}
+.term-body{
+  padding:24px;font-family:'Courier New',monospace;
+  font-size:13px;line-height:2;min-height:240px;
+}
+.term-line{display:flex;gap:8px;flex-wrap:wrap}
+.tp{color:var(--accent3)}.tc{color:var(--text-bright)}.tk{color:var(--accent2)}
+.tv{color:var(--accent)}.ts{color:var(--accent5)}.tm{color:var(--text-dim)}
+#term-cursor{
+  display:inline-block;width:8px;height:15px;
+  background:var(--accent3);animation:blink 0.9s step-end infinite;
+  vertical-align:middle;
+}
+.term-input-row{display:flex;align-items:center;gap:8px;margin-top:4px}
+#term-input{
+  background:transparent;border:none;outline:none;
+  font-family:'Courier New',monospace;font-size:13px;
+  color:var(--text-bright);flex:1;caret-color:var(--accent3);
+  cursor:text;
+}
+.term-hint{font-size:11px;color:var(--text-dim);margin-top:16px;font-family:'Courier New',monospace}
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════ */
+footer{
+  padding:60px 0 40px;
+  border-top:1px solid var(--border);
+  text-align:center;
+}
+.footer-name{
+  font-family:'Courier New',monospace;font-size:13px;
+  color:var(--text-dim);margin-bottom:8px;
+}
+.footer-name span{color:var(--accent3)}
+.footer-links{
+  display:flex;justify-content:center;gap:24px;
+  margin:16px 0;flex-wrap:wrap;
+}
+.footer-links a{
+  font-size:12px;color:var(--text-dim);transition:color 0.2s;
+  font-family:'Courier New',monospace;
+}
+.footer-links a:hover{color:var(--accent)}
+.footer-copy{font-size:11px;color:var(--text-dim);margin-top:8px;opacity:0.5}
+
+/* ═══════════════════════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════════════════════ */
+.reveal{opacity:0;transform:translateY(28px);transition:all 0.7s var(--transition)}
+.reveal.in{opacity:1;transform:translateY(0)}
+.reveal-left{opacity:0;transform:translateX(-28px);transition:all 0.7s var(--transition)}
+.reveal-left.in{opacity:1;transform:translateX(0)}
+.reveal-right{opacity:0;transform:translateX(28px);transition:all 0.7s var(--transition)}
+.reveal-right.in{opacity:1;transform:translateX(0)}
+.reveal-scale{opacity:0;transform:scale(0.93);transition:all 0.6s var(--transition)}
+.reveal-scale.in{opacity:1;transform:scale(1)}
+
+/* stagger children */
+.stagger>*{opacity:0;transform:translateY(20px);transition:all 0.5s var(--transition)}
+.stagger.in>*:nth-child(1){opacity:1;transform:none;transition-delay:0.05s}
+.stagger.in>*:nth-child(2){opacity:1;transform:none;transition-delay:0.12s}
+.stagger.in>*:nth-child(3){opacity:1;transform:none;transition-delay:0.19s}
+.stagger.in>*:nth-child(4){opacity:1;transform:none;transition-delay:0.26s}
+.stagger.in>*:nth-child(5){opacity:1;transform:none;transition-delay:0.33s}
+.stagger.in>*:nth-child(6){opacity:1;transform:none;transition-delay:0.40s}
+.stagger.in>*:nth-child(7){opacity:1;transform:none;transition-delay:0.47s}
+.stagger.in>*:nth-child(8){opacity:1;transform:none;transition-delay:0.54s}
+
+/* ═══════════════════════════════════════════════
+   KEYFRAMES
+═══════════════════════════════════════════════ */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-dim)}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr;gap:32px}
+  .hero-card{display:none}
+  .bento{grid-template-columns:1fr}
+  .bc-main,.bc-loc,.bc-langs{grid-column:span 1}
+  .edu-grid{grid-template-columns:1fr}
+  .skills-layout{grid-template-columns:1fr}
+  body{cursor:auto}
+  #cursor,#cursor-ring{display:none}
+}
+@media(max-width:600px){
+  .stats-strip{grid-template-columns:repeat(2,1fr)}
+  .nav-links{display:none}
+  .nav-cta{display:none}
+  .hero-actions{flex-direction:column}
+  .btn-primary,.btn-outline{width:100%;text-align:center}
+}
 </style>
 </head>
 <body>
 
-<canvas id="matrix-canvas"></canvas>
-<div id="particles-bg"></div>
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
 
-<!-- NAV -->
-<nav>
+<!-- SCROLL PROGRESS -->
+<div id="scroll-progress"></div>
+
+<!-- MATRIX BG -->
+<canvas id="matrix-canvas"></canvas>
+<div id="noise-overlay"></div>
+
+<!-- ═══ NAV ═══ -->
+<nav id="navbar">
   <div class="nav-inner">
-    <div class="nav-brand"><span>~/</span>aadil-ganie <span style="color:var(--text-muted)">$</span></div>
+    <div class="nav-brand">
+      <div class="nb-dot"></div>
+      ~/aadil-ganie
+    </div>
     <ul class="nav-links">
       <li><a href="#about">about</a></li>
       <li><a href="#experience">experience</a></li>
@@ -827,859 +920,1040 @@
       <li><a href="#publications">publications</a></li>
       <li><a href="#awards">awards</a></li>
     </ul>
+    <a href="mailto:aadilganiganie@gmail.com" class="nav-cta">hire me →</a>
   </div>
 </nav>
 
 <div class="wrapper">
 
-  <!-- HERO -->
-  <section class="hero" id="top">
-    <div class="hero-grid">
-      <div class="terminal-window">
-        <div class="terminal-bar">
-          <div class="terminal-dot dot-red"></div>
-          <div class="terminal-dot dot-yellow"></div>
-          <div class="terminal-dot dot-green"></div>
-          <span class="terminal-title">bash — aadil@kfupm:~</span>
-        </div>
-        <div class="terminal-body">
-          <div><span class="t-prompt">aadil@kfupm</span><span style="color:var(--text-muted)">:</span><span style="color:var(--accent)">~</span><span style="color:var(--text-muted)"> $ </span><span class="t-cmd">cat profile.json</span></div>
-          <div style="margin-top:10px;color:var(--border)">{</div>
-          <div style="padding-left:16px"><span class="t-key">"name"</span>: <span class="t-str">"Dr. Aadil Gani Ganie"</span>,</div>
-          <div style="padding-left:16px"><span class="t-key">"title"</span>: <span class="t-str">"Postdoctoral Research Fellow"</span>,</div>
-          <div style="padding-left:16px"><span class="t-key">"current"</span>: <span class="t-str">"KFUPM, Saudi Arabia"</span>,</div>
-          <div style="padding-left:16px"><span class="t-key">"phd"</span>: <span class="t-str">"University of Miskolc, Hungary"</span>,</div>
-          <div style="padding-left:16px"><span class="t-key">"expertise"</span>: [</div>
-          <div style="padding-left:32px"><span class="t-str">"LLMs &amp; NLP"</span>, <span class="t-str">"AI Agents"</span>, <span class="t-str">"Cybersecurity"</span>,</div>
-          <div style="padding-left:32px"><span class="t-str">"Intelligent Manufacturing"</span>, <span class="t-str">"HPC"</span></div>
-          <div style="padding-left:16px">],</div>
-          <div style="padding-left:16px"><span class="t-key">"publications"</span>: <span class="t-val">15</span>,</div>
-          <div style="padding-left:16px"><span class="t-key">"eu_projects_funded"</span>: <span class="t-str">"€9.83M"</span>,</div>
-          <div style="padding-left:16px"><span class="t-key">"email"</span>: <span class="t-str">"aadilganiganie@gmail.com"</span></div>
-          <div style="color:var(--border)">}</div>
-          <div style="margin-top:10px"><span class="t-prompt">aadil@kfupm</span><span style="color:var(--text-muted)">:</span><span style="color:var(--accent)">~</span><span style="color:var(--text-muted)"> $ </span><span class="t-cursor"></span></div>
-        </div>
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="top">
+  <div class="hero-grid">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <div class="blink"></div>
+        Available for collaboration · Postdoc @ KFUPM
       </div>
-
-      <div class="hero-avatar-side">
-        <div class="avatar-frame">
-          <div class="avatar-inner">🧑‍💻</div>
-        </div>
-        <div class="social-links">
-          <a href="https://github.com/aadilganigaie" target="_blank" class="social-btn">
-            <span class="social-icon">🐙</span> github/aadilganigaie
-          </a>
-          <a href="https://www.linkedin.com/in/aadil-gani-ganie-1b0199102/" target="_blank" class="social-btn">
-            <span class="social-icon">💼</span> LinkedIn Profile
-          </a>
-          <a href="mailto:aadilganiganie@gmail.com" class="social-btn">
-            <span class="social-icon">📧</span> aadilganiganie@gmail.com
-          </a>
-          <a href="tel:+966502051352" class="social-btn">
-            <span class="social-icon">📞</span> +966 502051352
-          </a>
-        </div>
+      <h1 class="hero-name">
+        Dr. <span class="name-accent">Aadil Gani</span><br>Ganie
+      </h1>
+      <div class="hero-title-wrap">
+        <span class="typed-text" id="typed-text"></span><span class="cursor-type"></span>
       </div>
-    </div>
-
-    <!-- STATS BAR -->
-    <div class="stats-bar">
-      <div class="stat-item">
-        <span class="stat-num"><span class="counter" data-target="15">0</span>+</span>
-        <span class="stat-label">Publications</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-num">€<span class="counter" data-target="9">0</span>.8M+</span>
-        <span class="stat-label">EU Funding</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-num"><span class="counter" data-target="7">0</span></span>
-        <span class="stat-label">Years Research</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-num"><span class="counter" data-target="5">0</span></span>
-        <span class="stat-label">Countries</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ABOUT -->
-  <section id="about" class="reveal">
-    <div class="section-header">
-      <div class="section-icon">👨‍🔬</div>
-      <h2 class="section-title"><span>//</span> about_me</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="about-card">
-      <p class="about-text">
-        Postdoctoral Research Fellow at the <strong>Interdisciplinary Research Center for Intelligent Manufacturing &amp; Robotics (IRC IMR)</strong>, King Fahd University of Petroleum &amp; Minerals (KFUPM), Saudi Arabia. My research focuses on <strong>intelligent manufacturing, robotics, and high-performance computing (HPC)</strong>.<br><br>
-        I earned my <strong>Ph.D. in Computer Science</strong> from the University of Miskolc, Hungary, specializing in the intersection of language and social media for <strong>sentiment analysis</strong>. My expertise includes <strong>large language models, machine learning, and NLP</strong>. Previously, I worked as a Postdoctoral Researcher at <strong>Universitat Politècnica de València (UPV), Spain</strong> and contributed to AI-driven cybersecurity at the <strong>MYWAI Lab, University of Genoa, Italy</strong>.
+      <p class="hero-desc">
+        <strong>NLP · LLMs · AI Agents · HPC · Cybersecurity</strong><br>
+        Postdoctoral Research Fellow crafting intelligent systems at the frontier of
+        language models, manufacturing intelligence, and secure AI.
+        PhD from University of Miskolc · 15+ publications · €9.8M+ EU funding.
       </p>
-      <div class="location-chips">
-        <span class="chip chip-green">📍 Dhahran, Saudi Arabia (Current)</span>
-        <span class="chip chip-blue">🇪🇸 Valencia, Spain</span>
-        <span class="chip chip-purple">🇮🇹 Genova, Italy</span>
-        <span class="chip chip-blue">🇭🇺 Miskolc, Hungary</span>
-        <span class="chip chip-green">🇮🇳 India</span>
+      <div class="hero-actions">
+        <a href="#publications" class="btn-primary">View Publications</a>
+        <a href="#projects" class="btn-outline">Explore Projects</a>
+        <a href="mailto:aadilganiganie@gmail.com" class="btn-outline">Get In Touch</a>
+      </div>
+      <div class="hero-social">
+        <a href="https://github.com/aadilganigaie" target="_blank" class="social-icon-btn" title="GitHub">🐙</a>
+        <a href="https://www.linkedin.com/in/aadil-gani-ganie-1b0199102/" target="_blank" class="social-icon-btn" title="LinkedIn">💼</a>
+        <a href="mailto:aadilganiganie@gmail.com" class="social-icon-btn" title="Email">📧</a>
+        <a href="tel:+966502051352" class="social-icon-btn" title="Phone">📞</a>
       </div>
     </div>
-  </section>
-
-  <!-- EXPERIENCE -->
-  <section id="experience" class="reveal">
-    <div class="section-header">
-      <div class="section-icon">💼</div>
-      <h2 class="section-title"><span>//</span> experience</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="timeline">
-
-      <div class="timeline-item">
-        <div class="timeline-dot current"></div>
-        <div class="exp-card" onclick="toggleExp(this)">
-          <div class="exp-header">
-            <div>
-              <div class="exp-role">Postdoctoral Research Fellow</div>
-              <div class="exp-company">King Fahd University of Petroleum &amp; Minerals (KFUPM)</div>
-            </div>
-            <span class="exp-badge badge-current">● CURRENT</span>
-          </div>
-          <div class="exp-meta">
-            <span>📅 Apr 2026 – Present</span>
-            <span>📍 Dammam, Saudi Arabia</span>
-            <span>🔬 IRC IMR</span>
-          </div>
-          <div class="exp-toggle">▶ expand details</div>
-          <div class="exp-details">
-            <ul>
-              <li>Conducting research in <strong>intelligent manufacturing, robotics, and HPC</strong></li>
-              <li>Developing AI-driven solutions for automation and optimization in manufacturing</li>
-              <li>Collaborating with interdisciplinary teams integrating ML and robotics</li>
-              <li>Publishing research findings and contributing to the Stress Analysis Lab</li>
-            </ul>
-          </div>
+    <div class="hero-card">
+      <div class="avatar-glow-ring">
+        <div class="avatar-inner">🧑‍💻</div>
+      </div>
+      <div class="info-chips">
+        <div class="info-chip">
+          <span class="ic-icon">📍</span>
+          <div><div class="ic-label">Location</div><div class="ic-val">Dhahran, Saudi Arabia</div></div>
         </div>
-      </div>
-
-      <div class="timeline-item">
-        <div class="timeline-dot current"></div>
-        <div class="exp-card" onclick="toggleExp(this)">
-          <div class="exp-header">
-            <div>
-              <div class="exp-role">Postdoctoral Fellow</div>
-              <div class="exp-company">Universitat Politècnica de València (UPV)</div>
-            </div>
-            <span class="exp-badge badge-current">● CURRENT</span>
-          </div>
-          <div class="exp-meta">
-            <span>📅 Apr 2025 – Present</span>
-            <span>📍 Valencia, Spain</span>
-            <span>⚡ HPC / AI</span>
-          </div>
-          <div class="exp-toggle">▶ expand details</div>
-          <div class="exp-details">
-            <ul>
-              <li>Researching ML models to optimize <strong>Last-Level Cache (LLC) management</strong> for multicore processors</li>
-              <li>Performance tuning for Intel and AMD architectures</li>
-              <li>Designing AI-driven solutions for cache efficiency, latency reduction, and HPC optimization</li>
-              <li>Published in peer-reviewed journals and presented at conferences</li>
-            </ul>
-          </div>
+        <div class="info-chip">
+          <span class="ic-icon">🔬</span>
+          <div><div class="ic-label">Institute</div><div class="ic-val">KFUPM · IRC IMR</div></div>
         </div>
-      </div>
-
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="exp-card" onclick="toggleExp(this)">
-          <div class="exp-header">
-            <div>
-              <div class="exp-role">University Research Assistant cum Postdoc</div>
-              <div class="exp-company">University of Genoa (MYWAI Lab)</div>
-            </div>
-            <span class="exp-badge badge-past">2024–2025</span>
-          </div>
-          <div class="exp-meta">
-            <span>📅 Aug 2024 – Mar 2025</span>
-            <span>📍 Genova, Italy</span>
-            <span>🔐 EU Funded</span>
-          </div>
-          <div class="exp-toggle">▶ expand details</div>
-          <div class="exp-details">
-            <p style="margin-bottom:10px"><strong style="color:var(--accent2)">Advanced Cybersecurity & Auto-Configuration for Medical Devices and Industrial Systems using LLMs</strong></p>
-            <ul>
-              <li>Designed &amp; fine-tuned LLMs for analyzing log data from medical/industrial devices</li>
-              <li>Log data analysis, preprocessing, and feature extraction</li>
-              <li>Implemented <strong>self-healing &amp; patch management</strong> systems</li>
-              <li>Auto-configuration of OPC UA, Modbus, Profibus, Fieldbus protocols</li>
-              <li>Generated WoT-compliant OPC UA interfaces for edge devices</li>
-              <li>Partnered with medical and industrial device manufacturers</li>
-            </ul>
-          </div>
+        <div class="info-chip">
+          <span class="ic-icon">🎓</span>
+          <div><div class="ic-label">PhD</div><div class="ic-val">Univ. of Miskolc, Hungary</div></div>
         </div>
-      </div>
-
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="exp-card" onclick="toggleExp(this)">
-          <div class="exp-header">
-            <div>
-              <div class="exp-role">Data Scientist</div>
-              <div class="exp-company">Planimetere Kft.</div>
-            </div>
-            <span class="exp-badge badge-past">2024</span>
-          </div>
-          <div class="exp-meta">
-            <span>📅 Jan 2024 – Jul 2024</span>
-            <span>📍 Budapest, Hungary</span>
-            <span>🏥 Clinical AI</span>
-          </div>
-          <div class="exp-toggle">▶ expand details</div>
-          <div class="exp-details">
-            <ul>
-              <li>Clinical Data Analysis using LLM, RAG for clinical trial data</li>
-              <li>Model Training, Evaluation, and Fine-tuning of LLMs</li>
-              <li>Feature Engineering, Text Representation, Language Understanding</li>
-              <li>R for clinical data processing and statistical analysis</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="exp-card" onclick="toggleExp(this)">
-          <div class="exp-header">
-            <div>
-              <div class="exp-role">University Teaching Assistant</div>
-              <div class="exp-company">University of Miskolc</div>
-            </div>
-            <span class="exp-badge badge-past">2021–2023</span>
-          </div>
-          <div class="exp-meta">
-            <span>📅 Sep 2021 – Oct 2023</span>
-            <span>📍 Miskolc, Hungary</span>
-            <span>🎓 Academia</span>
-          </div>
-          <div class="exp-toggle">▶ expand details</div>
-          <div class="exp-details">
-            <ul>
-              <li>Delivered lectures and conducted workshops</li>
-              <li>Developed course materials</li>
-              <li>Provided guidance and support to students</li>
-              <li>Evaluated student performance</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="exp-card" onclick="toggleExp(this)">
-          <div class="exp-header">
-            <div>
-              <div class="exp-role">IT Support</div>
-              <div class="exp-company">Juggernaut Books</div>
-            </div>
-            <span class="exp-badge badge-past">2018–2020</span>
-          </div>
-          <div class="exp-meta">
-            <span>📅 Aug 2018 – Feb 2020</span>
-            <span>📍 New Delhi, India</span>
-          </div>
-          <div class="exp-toggle">▶ expand details</div>
-          <div class="exp-details">
-            <ul>
-              <li>Applications support specialist &amp; help desk operator</li>
-              <li>Email and phone support, resolving technical issues</li>
-              <li>Uploading book metadata, working with Amazon Kindle</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- EDUCATION -->
-  <section id="education" class="reveal">
-    <div class="section-header">
-      <div class="section-icon">🎓</div>
-      <h2 class="section-title"><span>//</span> education</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="edu-grid">
-      <div class="edu-card phd">
-        <span class="edu-icon">🏆</span>
-        <div class="edu-degree">Ph.D. in Computer Science</div>
-        <div class="edu-univ">University of Miskolc</div>
-        <div class="edu-year">📅 Sep 2020 – Jun 2024 · Miskolc, Hungary</div>
-        <div style="margin-top:10px">
-          <span class="chip chip-purple" style="font-size:10px">Sentiment Analysis · NLP · Social Media</span>
-        </div>
-      </div>
-      <div class="edu-card masters">
-        <span class="edu-icon">🎓</span>
-        <div class="edu-degree">Master of Computer Applications</div>
-        <div class="edu-univ">Pondicherry University</div>
-        <div class="edu-year">📅 Jul 2015 – May 2018 · Pondicherry, India</div>
-      </div>
-      <div class="edu-card bsc">
-        <span class="edu-icon">📚</span>
-        <div class="edu-degree">B.Sc. Information Technology</div>
-        <div class="edu-univ">University of Kashmir</div>
-        <div class="edu-year">📅 Mar 2012 – Apr 2015 · Srinagar, India</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SKILLS -->
-  <section id="skills" class="reveal">
-    <div class="section-header">
-      <div class="section-icon">⚡</div>
-      <h2 class="section-title"><span>//</span> skills</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="skills-container">
-      <div class="skill-group">
-        <div class="skill-group-title">🤖 AI / LLMs / NLP</div>
-        <div class="skill-tags">
-          <span class="skill-tag"><span class="tag-dot dot-ai"></span>Large Language Models</span>
-          <span class="skill-tag"><span class="tag-dot dot-ai"></span>NLP</span>
-          <span class="skill-tag"><span class="tag-dot dot-ai"></span>HuggingFace</span>
-          <span class="skill-tag"><span class="tag-dot dot-ai"></span>Transformers</span>
-          <span class="skill-tag"><span class="tag-dot dot-ai"></span>LangChain</span>
-          <span class="skill-tag"><span class="tag-dot dot-ai"></span>RAG</span>
-          <span class="skill-tag"><span class="tag-dot dot-ai"></span>Fine-tuning</span>
-          <span class="skill-tag"><span class="tag-dot dot-ai"></span>AI Agents</span>
-          <span class="skill-tag"><span class="tag-dot dot-ai"></span>Flowise AI</span>
-          <span class="skill-tag"><span class="tag-dot dot-ai"></span>Crew AI</span>
-          <span class="skill-tag"><span class="tag-dot dot-ai"></span>Pydantic AI</span>
-          <span class="skill-tag"><span class="tag-dot dot-ai"></span>MCP Server</span>
-        </div>
-      </div>
-      <div class="skill-group">
-        <div class="skill-group-title">🧠 Machine Learning / Deep Learning</div>
-        <div class="skill-tags">
-          <span class="skill-tag"><span class="tag-dot dot-ml"></span>Neural Networks</span>
-          <span class="skill-tag"><span class="tag-dot dot-ml"></span>CNN</span>
-          <span class="skill-tag"><span class="tag-dot dot-ml"></span>RNN</span>
-          <span class="skill-tag"><span class="tag-dot dot-ml"></span>Deep Learning</span>
-          <span class="skill-tag"><span class="tag-dot dot-ml"></span>Scikit-Learn</span>
-          <span class="skill-tag"><span class="tag-dot dot-ml"></span>Keras</span>
-          <span class="skill-tag"><span class="tag-dot dot-ml"></span>Pandas</span>
-          <span class="skill-tag"><span class="tag-dot dot-ml"></span>NumPy</span>
-          <span class="skill-tag"><span class="tag-dot dot-ml"></span>Python</span>
-          <span class="skill-tag"><span class="tag-dot dot-ml"></span>SQL</span>
-          <span class="skill-tag"><span class="tag-dot dot-ml"></span>R</span>
-          <span class="skill-tag"><span class="tag-dot dot-ml"></span>Jupyter</span>
-        </div>
-      </div>
-      <div class="skill-group">
-        <div class="skill-group-title">☁️ Cloud &amp; Deployment</div>
-        <div class="skill-tags">
-          <span class="skill-tag"><span class="tag-dot dot-cloud"></span>AWS</span>
-          <span class="skill-tag"><span class="tag-dot dot-cloud"></span>Azure</span>
-          <span class="skill-tag"><span class="tag-dot dot-cloud"></span>Heroku</span>
-          <span class="skill-tag"><span class="tag-dot dot-cloud"></span>Firebase</span>
-          <span class="skill-tag"><span class="tag-dot dot-cloud"></span>FastAPI</span>
-          <span class="skill-tag"><span class="tag-dot dot-cloud"></span>Streamlit</span>
-          <span class="skill-tag"><span class="tag-dot dot-cloud"></span>Docker</span>
-          <span class="skill-tag"><span class="tag-dot dot-cloud"></span>Edge Computing</span>
-        </div>
-      </div>
-      <div class="skill-group">
-        <div class="skill-group-title">🔌 Industrial Protocols &amp; IoT</div>
-        <div class="skill-tags">
-          <span class="skill-tag"><span class="tag-dot dot-proto"></span>OPC UA / OPC-DA</span>
-          <span class="skill-tag"><span class="tag-dot dot-proto"></span>Modbus</span>
-          <span class="skill-tag"><span class="tag-dot dot-proto"></span>DNP3</span>
-          <span class="skill-tag"><span class="tag-dot dot-proto"></span>IEC 60870-5-104</span>
-          <span class="skill-tag"><span class="tag-dot dot-proto"></span>Profibus</span>
-          <span class="skill-tag"><span class="tag-dot dot-proto"></span>Fieldbus</span>
-          <span class="skill-tag"><span class="tag-dot dot-proto"></span>Web of Things (WoT)</span>
-          <span class="skill-tag"><span class="tag-dot dot-proto"></span>System Integration</span>
-        </div>
-      </div>
-      <div class="skill-group">
-        <div class="skill-group-title">🛠️ Tools &amp; Others</div>
-        <div class="skill-tags">
-          <span class="skill-tag"><span class="tag-dot dot-tools"></span>GitHub</span>
-          <span class="skill-tag"><span class="tag-dot dot-tools"></span>Anaconda</span>
-          <span class="skill-tag"><span class="tag-dot dot-tools"></span>Google Colab</span>
-          <span class="skill-tag"><span class="tag-dot dot-tools"></span>Kaggle</span>
-          <span class="skill-tag"><span class="tag-dot dot-tools"></span>HTML5/CSS/JS</span>
-          <span class="skill-tag"><span class="tag-dot dot-tools"></span>Chatbots</span>
-          <span class="skill-tag"><span class="tag-dot dot-tools"></span>Information Retrieval</span>
-          <span class="skill-tag"><span class="tag-dot dot-tools"></span>Pipeline Dev</span>
+        <div class="info-chip">
+          <span class="ic-icon">✉️</span>
+          <div><div class="ic-label">Email</div><div class="ic-val">aadilganiganie@gmail.com</div></div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- CONTRIBUTION GRAPH -->
-  <section class="reveal" style="border-bottom:1px solid var(--border); padding: 40px 0;">
-    <div class="contrib-section">
-      <div class="contrib-header">
-        <div class="section-header" style="margin-bottom:0">
-          <div class="section-icon">📊</div>
-          <h2 class="section-title"><span>//</span> research_activity</h2>
-        </div>
-        <span style="font-size:11px;color:var(--text-muted);font-family:'Courier New',monospace">2020–2026</span>
+  <div class="stats-strip">
+    <div class="stat-block">
+      <span class="stat-num"><span class="counter" data-target="15">0</span>+</span>
+      <span class="stat-label">Publications</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num">€<span class="counter" data-target="9">0</span>.8M+</span>
+      <span class="stat-label">EU Funding</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num"><span class="counter" data-target="7">0</span> yrs</span>
+      <span class="stat-label">Research Experience</span>
+    </div>
+    <div class="stat-block">
+      <span class="stat-num"><span class="counter" data-target="5">0</span></span>
+      <span class="stat-label">Countries</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ABOUT ═══ -->
+<section id="about">
+  <div class="sec-header reveal">
+    <span class="sec-tag">01</span>
+    <h2 class="sec-title">About <span>Me</span></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="bento reveal">
+    <div class="bento-card bc-main">
+      <div class="bento-label">Profile</div>
+      <div class="bc-about-text">
+        <p>
+          I am a <strong>Postdoctoral Research Fellow</strong> at the Interdisciplinary Research Center for
+          <strong>Intelligent Manufacturing &amp; Robotics (IRC IMR)</strong>, King Fahd University of
+          Petroleum &amp; Minerals (KFUPM), Saudi Arabia — working at the intersection of AI, HPC, and
+          industrial systems.
+        </p>
+        <p>
+          My PhD from the <strong>University of Miskolc</strong> focused on sentiment analysis and social
+          media NLP. Post-doctorate I expanded into <strong>LLMs, AI Agents, cybersecurity for industrial
+          devices</strong>, and <strong>cache-optimization with ML</strong> at UPV Spain. I have contributed
+          to <strong>EU-funded research projects</strong> worth over €9.83M, published across Scopus-indexed
+          journals, and collaborated with teams across Italy, Spain, Hungary, and Saudi Arabia.
+        </p>
+        <p>
+          My current research agenda spans <strong>LLM-driven automation</strong>, multimodal AI systems,
+          <strong>industrial IoT security</strong>, and <strong>HPC performance tuning</strong>.
+        </p>
       </div>
-      <div class="contrib-graph" style="margin-top:16px">
-        <div class="contrib-grid" id="contrib-grid"></div>
-        <div class="contrib-legend">
-          Less <div class="contrib-cell c0"></div><div class="contrib-cell c1"></div><div class="contrib-cell c2"></div><div class="contrib-cell c3"></div><div class="contrib-cell c4"></div> More
+    </div>
+    <div class="bento-card bc-loc">
+      <div class="bento-label">Global Footprint</div>
+      <div class="loc-list">
+        <div class="loc-item loc-current"><span class="flag">🇸🇦</span> Dhahran, Saudi Arabia <span style="margin-left:auto;font-size:10px;color:var(--accent3)">● now</span></div>
+        <div class="loc-item"><span class="flag">🇪🇸</span> Valencia, Spain</div>
+        <div class="loc-item"><span class="flag">🇮🇹</span> Genova, Italy</div>
+        <div class="loc-item"><span class="flag">🇭🇺</span> Miskolc, Hungary</div>
+        <div class="loc-item"><span class="flag">🇮🇳</span> India</div>
+      </div>
+    </div>
+    <div class="bento-card bc-langs">
+      <div class="bento-label">Languages</div>
+      <div class="lang-tags">
+        <span class="lang-tag">🇬🇧 English</span>
+        <span class="lang-tag">🇮🇳 Urdu</span>
+        <span class="lang-tag">🇮🇳 Hindi</span>
+        <span class="lang-tag">🇮🇳 Kashmiri</span>
+        <span class="lang-tag">🇭🇺 Hungarian (basic)</span>
+        <span class="lang-tag">🇮🇹 Italian (basic)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ EXPERIENCE ═══ -->
+<section id="experience">
+  <div class="sec-header reveal">
+    <span class="sec-tag">02</span>
+    <h2 class="sec-title">Work <span>Experience</span></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="timeline">
+
+    <div class="tl-item reveal">
+      <div class="tl-dot active"></div>
+      <div class="exp-card" onclick="toggleExp(this)">
+        <div class="exp-top">
+          <div>
+            <div class="exp-role">Postdoctoral Research Fellow</div>
+            <div class="exp-company">King Fahd University of Petroleum &amp; Minerals (KFUPM)</div>
+          </div>
+          <span class="exp-badge badge-now">● CURRENT</span>
+        </div>
+        <div class="exp-meta">
+          <span>📅 Apr 2026 – Present</span>
+          <span>📍 Dammam, Saudi Arabia</span>
+          <span>🔬 IRC IMR</span>
+        </div>
+        <div class="exp-toggle-btn"><span class="toggle-arrow">▶</span> expand details</div>
+        <div class="exp-details">
+          <ul>
+            <li>Conducting research in <strong>intelligent manufacturing, robotics, and HPC</strong></li>
+            <li>Developing AI-driven solutions for automation and optimization in manufacturing</li>
+            <li>Collaborating with interdisciplinary teams integrating ML and robotics</li>
+            <li>Publishing research findings and contributing to the Stress Analysis Lab</li>
+          </ul>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- PROJECTS -->
-  <section id="projects" class="reveal">
-    <div class="section-header">
-      <div class="section-icon">🚀</div>
-      <h2 class="section-title"><span>//</span> projects</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="projects-grid">
-
-      <div class="project-card cat-cyber">
-        <div class="project-header">
-          <span class="project-emoji">🛡️</span>
-          <span class="eu-badge">EU €2.5M</span>
-        </div>
-        <div class="project-name">ROSSANA</div>
-        <div class="project-desc">Cyber Threat Hunting using AI Agents (LLM-Driven). Developed an AI agent using Flowise and a one-prompt LLM to perform cyber threat detection on log data collected from medical devices across the Liguria region.</div>
-        <div class="project-footer">
-          <div class="project-tags">
-            <span class="ptag">LLM</span><span class="ptag">AI Agents</span><span class="ptag">Cybersecurity</span>
+    <div class="tl-item reveal">
+      <div class="tl-dot active"></div>
+      <div class="exp-card" onclick="toggleExp(this)">
+        <div class="exp-top">
+          <div>
+            <div class="exp-role">Postdoctoral Fellow</div>
+            <div class="exp-company">Universitat Politècnica de València (UPV)</div>
           </div>
+          <span class="exp-badge badge-now">● CURRENT</span>
         </div>
-      </div>
-
-      <div class="project-card cat-eu">
-        <div class="project-header">
-          <span class="project-emoji">⛑️</span>
-          <span class="eu-badge">EU €2.9M</span>
+        <div class="exp-meta">
+          <span>📅 Apr 2025 – Present</span>
+          <span>📍 Valencia, Spain</span>
+          <span>⚡ HPC / AI</span>
         </div>
-        <div class="project-name">WeldWise</div>
-        <div class="project-desc">Multimodal Smart Helmet Assistant for Welders. Built a smart helmet integrating sensor, text, audio, and video data. Designed an LLM-based multimodal chatbot to guide welders in real-time.</div>
-        <div class="project-footer">
-          <div class="project-tags">
-            <span class="ptag">Multimodal</span><span class="ptag">LLM</span><span class="ptag">IoT</span>
-          </div>
+        <div class="exp-toggle-btn"><span class="toggle-arrow">▶</span> expand details</div>
+        <div class="exp-details">
+          <ul>
+            <li>Researching ML models to optimize <strong>Last-Level Cache (LLC) management</strong> for multicore processors</li>
+            <li>Performance tuning for Intel and AMD architectures</li>
+            <li>Designing AI-driven solutions for cache efficiency, latency reduction, and HPC optimization</li>
+            <li>Published in peer-reviewed journals and presented at conferences</li>
+          </ul>
         </div>
-      </div>
-
-      <div class="project-card cat-eu">
-        <div class="project-header">
-          <span class="project-emoji">🌊</span>
-          <span class="eu-badge">EU €3.2M</span>
-        </div>
-        <div class="project-name">NEPTUN</div>
-        <div class="project-desc">LLM-Powered Underwater 3D Reconstruction Assistant. Developed an LLM-based chatbot for interaction with visual and spatial data to support marine scientists in underwater reconstruction.</div>
-        <div class="project-footer">
-          <div class="project-tags">
-            <span class="ptag">3D Vision</span><span class="ptag">LLM</span><span class="ptag">Marine AI</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="project-card cat-llm">
-        <div class="project-header">
-          <span class="project-emoji">🤖</span>
-          <span class="eu-badge">EU €1.23M</span>
-        </div>
-        <div class="project-name">Admin Task Automation</div>
-        <div class="project-desc">Automated repetitive administrative tasks using Language Modelling. EU funded project reducing manual overhead through intelligent NLP pipelines.</div>
-        <div class="project-footer">
-          <div class="project-tags">
-            <span class="ptag">NLP</span><span class="ptag">Automation</span><span class="ptag">LLM</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="project-card cat-llm">
-        <div class="project-header">
-          <span class="project-emoji">🏥</span>
-        </div>
-        <div class="project-name">ClinicalTrials-LLM-Chatbot</div>
-        <div class="project-desc">Designed and implemented a ClinicalTrial ChatBot utilizing LLM and Langchain, streamlining data analysis for clinical trial reports.</div>
-        <div class="project-footer">
-          <div class="project-tags">
-            <span class="ptag">LangChain</span><span class="ptag">RAG</span><span class="ptag">Clinical</span>
-          </div>
-          <a href="https://github.com/aadilganigaie/ClinicalTrials-LLM-Chatbot" target="_blank" class="project-link">⎋ GitHub</a>
-        </div>
-      </div>
-
-      <div class="project-card cat-nlp">
-        <div class="project-header">
-          <span class="project-emoji">📄</span>
-        </div>
-        <div class="project-name">PDFChatBot</div>
-        <div class="project-desc">A PDF interaction tool powered by LangChain and LLM for natural language querying and document summarization across multiple PDFs.</div>
-        <div class="project-footer">
-          <div class="project-tags">
-            <span class="ptag">LangChain</span><span class="ptag">LLM</span><span class="ptag">QA</span>
-          </div>
-          <a href="https://github.com/aadilganigaie/LangchainLLMwithmultiplePdfs" target="_blank" class="project-link">⎋ GitHub</a>
-        </div>
-      </div>
-
-      <div class="project-card cat-nlp">
-        <div class="project-header">
-          <span class="project-emoji">🧠</span>
-        </div>
-        <div class="project-name">MindCheck</div>
-        <div class="project-desc">Mental Health Detection powered by GPT-2 and LangChain LLM. Deployed on Streamlit, offers intuitive interface for text-based mental health predictions.</div>
-        <div class="project-footer">
-          <div class="project-tags">
-            <span class="ptag">GPT-2</span><span class="ptag">Mental Health</span><span class="ptag">NLP</span>
-          </div>
-          <a href="https://github.com/aadilganigaie/Mental_Health_NLP" target="_blank" class="project-link">⎋ GitHub</a>
-        </div>
-      </div>
-
-      <div class="project-card cat-nlp">
-        <div class="project-header">
-          <span class="project-emoji">🚫</span>
-        </div>
-        <div class="project-name">Spam Classifier</div>
-        <div class="project-desc">ML-based spam classifier deployed on Streamlit. Involves data preprocessing, feature engineering, model selection and evaluation for binary message classification.</div>
-        <div class="project-footer">
-          <div class="project-tags">
-            <span class="ptag">ML</span><span class="ptag">NLP</span><span class="ptag">Streamlit</span>
-          </div>
-          <a href="https://github.com/aadilganigaie/SpamClassifier" target="_blank" class="project-link">⎋ GitHub</a>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- PUBLICATIONS -->
-  <section id="publications" class="reveal">
-    <div class="section-header">
-      <div class="section-icon">📑</div>
-      <h2 class="section-title"><span>//</span> publications</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="pub-list">
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2025</div>
-        <div>
-          <div class="pub-title">Uncertainty in Authorship: Why Perfect AI Detection Is Mathematically Impossible</div>
-          <div class="pub-meta">Aadil Ganie · <span class="pub-journal">Cornell University (arXiv)</span> <span class="pub-index">Preprint</span></div>
-        </div>
-      </div>
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2025</div>
-        <div>
-          <div class="pub-title">Securing AI Agents: Implementing Role-Based Access Control for Industrial Applications</div>
-          <div class="pub-meta">Aadil Ganie · <span class="pub-journal">Cornell University (arXiv)</span> <span class="pub-index">Preprint</span></div>
-        </div>
-      </div>
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2024</div>
-        <div>
-          <div class="pub-title">Exploring noise-induced techniques to strengthen deep learning model resilience</div>
-          <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Pollack Periodica 19(3)</span> <span class="pub-index">Scopus</span> <span class="pub-if">SJR 0.385</span></div>
-        </div>
-      </div>
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2024</div>
-        <div>
-          <div class="pub-title">Enhancing Early Cancer Detection: An Investigation of DNA Sequences and Machine Learning</div>
-          <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Iraqi Journal of Science 65(8)</span> <span class="pub-index">Scopus</span> <span class="pub-if">SJR 0.341</span></div>
-        </div>
-      </div>
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2023</div>
-        <div>
-          <div class="pub-title">From big data to smart data: a sample gradient descent approach for machine learning</div>
-          <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Journal of Big Data 10(1) – Springer Nature</span> <span class="pub-index">Scopus</span> <span class="pub-if">I.F 13.4</span></div>
-        </div>
-      </div>
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2023</div>
-        <div>
-          <div class="pub-title">Exploring the Impact of Informal Language on Sentiment Analysis Models for Social Media Text Using CNN</div>
-          <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Multidiszciplináris tudományok 13(1)</span></div>
-        </div>
-      </div>
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2023</div>
-        <div>
-          <div class="pub-title">Social Media Posts as a Window into Mental Health: A Machine Learning Approach</div>
-          <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Preprint</span></div>
-        </div>
-      </div>
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2022</div>
-        <div>
-          <div class="pub-title">Identification of online harassment using ensemble fine-tuned pre-trained BERT</div>
-          <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Pollack Periodica 17(3)</span> <span class="pub-index">Scopus</span> <span class="pub-if">SJR 0.385</span></div>
-        </div>
-      </div>
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2022</div>
-        <div>
-          <div class="pub-title">Traditional or deep learning for sentiment analysis: A review</div>
-          <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Multidiszciplináris tudományok 12(1)</span></div>
-        </div>
-      </div>
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2022</div>
-        <div>
-          <div class="pub-title">An Approach to Implementation of Autoencoders in Intelligent Vehicles</div>
-          <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Springer Nature – VAE 2022</span></div>
-        </div>
-      </div>
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2021</div>
-        <div>
-          <div class="pub-title">Detection Of Semantic Obsessive Text In Multimedia Using Machine And Deep Learning</div>
-          <div class="pub-meta">Aadil Ganie et al. · <span class="pub-journal">JATIT 99(11)</span> <span class="pub-index">Scopus</span></div>
-        </div>
-      </div>
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2021</div>
-        <div>
-          <div class="pub-title">Sentiment analysis on the effect of trending source-less News</div>
-          <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Springer Nature – AISC Conference</span></div>
-        </div>
-      </div>
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2021</div>
-        <div>
-          <div class="pub-title">Covid-19 Situation In Hungary Using Time Series Analysis</div>
-          <div class="pub-meta">Aadil Ganie et al. · <span class="pub-journal">RGN Advances in Communication Technology</span></div>
-        </div>
-      </div>
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2020</div>
-        <div>
-          <div class="pub-title">Analyzing and predicting spear-phishing using machine learning methods</div>
-          <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Multidiszciplináris tudományok 10(4)</span></div>
-        </div>
-      </div>
-
-      <div class="pub-card">
-        <div class="pub-year-badge">2018</div>
-        <div>
-          <div class="pub-title">Enterprise Information Technology Governance: Insights from India Listed Companies</div>
-          <div class="pub-meta">Aadil Gani Ganie et al. · <span class="pub-journal">Asian Journal of Information Technology 17(6)</span> <span class="pub-index">Scopus</span></div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- AWARDS -->
-  <section id="awards" class="reveal">
-    <div class="section-header">
-      <div class="section-icon">🏅</div>
-      <h2 class="section-title"><span>//</span> honours &amp; awards</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="awards-grid">
-      <div class="award-card">
-        <span class="award-emoji">🎖️</span>
-        <div class="award-title">Stipendium Hungaricum PhD Fellowship</div>
-        <div class="award-org">University of Miskolc / EU Funded</div>
-        <div class="award-year">Sep 2020</div>
-      </div>
-      <div class="award-card">
-        <span class="award-emoji">🌐</span>
-        <div class="award-title">International Student &amp; Faculty Coordinator</div>
-        <div class="award-org">University of Miskolc</div>
-        <div class="award-year">During PhD</div>
-      </div>
-      <div class="award-card">
-        <span class="award-emoji">🏆</span>
-        <div class="award-title">Chinese National PhD Fellowship</div>
-        <div class="award-org">HIT (Harbin Institute of Technology)</div>
-        <div class="award-year">International Fellowship</div>
-      </div>
-      <div class="award-card">
-        <span class="award-emoji">🧱</span>
-        <div class="award-title">European Youth Project "Let's Brick"</div>
-        <div class="award-org">Lavaur, France</div>
-        <div class="award-year">28-day Volunteering</div>
-      </div>
-      <div class="award-card">
-        <span class="award-emoji">🏰</span>
-        <div class="award-title">European Youth Project "Veseli Castle"</div>
-        <div class="award-org">Pocinovica, Czech Republic</div>
-        <div class="award-year">14-day Volunteering</div>
-      </div>
-      <div class="award-card">
-        <span class="award-emoji">📖</span>
-        <div class="award-title">Supervision of Master Theses</div>
-        <div class="award-org">Fake News &amp; Hate Speech Detection using LLMs</div>
-        <div class="award-year">2 Theses Supervised</div>
       </div>
     </div>
-  </section>
 
-</div>
+    <div class="tl-item reveal">
+      <div class="tl-dot"></div>
+      <div class="exp-card" onclick="toggleExp(this)">
+        <div class="exp-top">
+          <div>
+            <div class="exp-role">University Research Assistant cum Postdoc</div>
+            <div class="exp-company">University of Genoa (MYWAI Lab)</div>
+          </div>
+          <span class="exp-badge badge-old">2024–2025</span>
+        </div>
+        <div class="exp-meta">
+          <span>📅 Aug 2024 – Mar 2025</span>
+          <span>📍 Genova, Italy</span>
+          <span>🔐 EU Funded</span>
+        </div>
+        <div class="exp-toggle-btn"><span class="toggle-arrow">▶</span> expand details</div>
+        <div class="exp-details">
+          <p style="margin-bottom:10px"><strong style="color:var(--accent2)">Advanced Cybersecurity &amp; Auto-Configuration for Medical Devices and Industrial Systems using LLMs</strong></p>
+          <ul>
+            <li>Designed &amp; fine-tuned LLMs for analyzing log data from medical/industrial devices</li>
+            <li>Log data analysis, preprocessing, and feature extraction</li>
+            <li>Implemented <strong>self-healing &amp; patch management</strong> systems</li>
+            <li>Auto-configuration of OPC UA, Modbus, Profibus, Fieldbus protocols</li>
+            <li>Generated WoT-compliant OPC UA interfaces for edge devices</li>
+            <li>Partnered with medical and industrial device manufacturers</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item reveal">
+      <div class="tl-dot"></div>
+      <div class="exp-card" onclick="toggleExp(this)">
+        <div class="exp-top">
+          <div>
+            <div class="exp-role">Data Scientist</div>
+            <div class="exp-company">Planimetere Kft.</div>
+          </div>
+          <span class="exp-badge badge-old">2024</span>
+        </div>
+        <div class="exp-meta">
+          <span>📅 Jan 2024 – Jul 2024</span>
+          <span>📍 Budapest, Hungary</span>
+          <span>🏥 Clinical AI</span>
+        </div>
+        <div class="exp-toggle-btn"><span class="toggle-arrow">▶</span> expand details</div>
+        <div class="exp-details">
+          <ul>
+            <li>Clinical Data Analysis using LLM, RAG for clinical trial data</li>
+            <li>Model Training, Evaluation, and Fine-tuning of LLMs</li>
+            <li>Feature Engineering, Text Representation, Language Understanding</li>
+            <li>R for clinical data processing and statistical analysis</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item reveal">
+      <div class="tl-dot"></div>
+      <div class="exp-card" onclick="toggleExp(this)">
+        <div class="exp-top">
+          <div>
+            <div class="exp-role">University Teaching Assistant</div>
+            <div class="exp-company">University of Miskolc</div>
+          </div>
+          <span class="exp-badge badge-old">2021–2023</span>
+        </div>
+        <div class="exp-meta">
+          <span>📅 Sep 2021 – Oct 2023</span>
+          <span>📍 Miskolc, Hungary</span>
+          <span>🎓 Academia</span>
+        </div>
+        <div class="exp-toggle-btn"><span class="toggle-arrow">▶</span> expand details</div>
+        <div class="exp-details">
+          <ul>
+            <li>Delivered lectures and conducted workshops in CS and ML</li>
+            <li>Developed comprehensive course materials and assessments</li>
+            <li>Supervised 2 Master's theses on Fake News &amp; Hate Speech Detection</li>
+            <li>Provided guidance and mentorship to international students</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item reveal">
+      <div class="tl-dot"></div>
+      <div class="exp-card" onclick="toggleExp(this)">
+        <div class="exp-top">
+          <div>
+            <div class="exp-role">IT Support Specialist</div>
+            <div class="exp-company">Juggernaut Books</div>
+          </div>
+          <span class="exp-badge badge-old">2018–2020</span>
+        </div>
+        <div class="exp-meta">
+          <span>📅 Aug 2018 – Feb 2020</span>
+          <span>📍 New Delhi, India</span>
+        </div>
+        <div class="exp-toggle-btn"><span class="toggle-arrow">▶</span> expand details</div>
+        <div class="exp-details">
+          <ul>
+            <li>Applications support specialist &amp; help desk operator</li>
+            <li>Email and phone support, resolving technical issues</li>
+            <li>Uploading book metadata, working with Amazon Kindle</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ EDUCATION ═══ -->
+<section id="education">
+  <div class="sec-header reveal">
+    <span class="sec-tag">03</span>
+    <h2 class="sec-title">Education</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="edu-grid stagger">
+    <div class="edu-card phd">
+      <div class="edu-icon-wrap">🏆</div>
+      <div class="edu-degree">Ph.D. in Computer Science</div>
+      <div class="edu-univ">University of Miskolc</div>
+      <div class="edu-year">📅 Sep 2020 – Jun 2024 · Miskolc, Hungary</div>
+      <div class="edu-tags">
+        <span class="edu-tag">Sentiment Analysis</span>
+        <span class="edu-tag">NLP</span>
+        <span class="edu-tag">Social Media</span>
+        <span class="edu-tag">Deep Learning</span>
+      </div>
+    </div>
+    <div class="edu-card mca">
+      <div class="edu-icon-wrap">🎓</div>
+      <div class="edu-degree">Master of Computer Applications</div>
+      <div class="edu-univ">Pondicherry University</div>
+      <div class="edu-year">📅 Jul 2015 – May 2018 · Pondicherry, India</div>
+      <div class="edu-tags">
+        <span class="edu-tag">Computer Science</span>
+        <span class="edu-tag">Applications</span>
+      </div>
+    </div>
+    <div class="edu-card bsc">
+      <div class="edu-icon-wrap">📚</div>
+      <div class="edu-degree">B.Sc. Information Technology</div>
+      <div class="edu-univ">University of Kashmir</div>
+      <div class="edu-year">📅 Mar 2012 – Apr 2015 · Srinagar, India</div>
+      <div class="edu-tags">
+        <span class="edu-tag">Information Technology</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SKILLS ═══ -->
+<section id="skills">
+  <div class="sec-header reveal">
+    <span class="sec-tag">04</span>
+    <h2 class="sec-title">Skills &amp; <span>Expertise</span></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="skills-layout reveal">
+    <div>
+      <div class="skill-group-title"><span></span>Core Proficiency</div>
+      <div class="skill-bar-row">
+        <div class="skill-bar-meta"><span class="skill-bar-name">Large Language Models &amp; NLP</span><span class="skill-bar-pct">95%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill fill-purple" data-width="95"></div></div>
+      </div>
+      <div class="skill-bar-row">
+        <div class="skill-bar-meta"><span class="skill-bar-name">Machine Learning / Deep Learning</span><span class="skill-bar-pct">92%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill fill-blue" data-width="92"></div></div>
+      </div>
+      <div class="skill-bar-row">
+        <div class="skill-bar-meta"><span class="skill-bar-name">AI Agents &amp; Agentic Systems</span><span class="skill-bar-pct">88%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill fill-purple" data-width="88"></div></div>
+      </div>
+      <div class="skill-bar-row">
+        <div class="skill-bar-meta"><span class="skill-bar-name">Python &amp; Data Science Stack</span><span class="skill-bar-pct">93%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill fill-green" data-width="93"></div></div>
+      </div>
+      <div class="skill-bar-row">
+        <div class="skill-bar-meta"><span class="skill-bar-name">Industrial IoT &amp; Protocols</span><span class="skill-bar-pct">82%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill fill-orange" data-width="82"></div></div>
+      </div>
+      <div class="skill-bar-row">
+        <div class="skill-bar-meta"><span class="skill-bar-name">HPC &amp; Systems Optimization</span><span class="skill-bar-pct">78%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill fill-blue" data-width="78"></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="skill-group-title"><span></span>AI / LLMs / NLP</div>
+      <div class="tag-cloud" style="margin-bottom:24px">
+        <span class="skill-tag t-ai"><span class="td" style="background:var(--accent2)"></span>LLMs</span>
+        <span class="skill-tag t-ai"><span class="td" style="background:var(--accent2)"></span>HuggingFace</span>
+        <span class="skill-tag t-ai"><span class="td" style="background:var(--accent2)"></span>Transformers</span>
+        <span class="skill-tag t-ai"><span class="td" style="background:var(--accent2)"></span>LangChain</span>
+        <span class="skill-tag t-ai"><span class="td" style="background:var(--accent2)"></span>RAG</span>
+        <span class="skill-tag t-ai"><span class="td" style="background:var(--accent2)"></span>Fine-tuning</span>
+        <span class="skill-tag t-ai"><span class="td" style="background:var(--accent2)"></span>AI Agents</span>
+        <span class="skill-tag t-ai"><span class="td" style="background:var(--accent2)"></span>Flowise</span>
+        <span class="skill-tag t-ai"><span class="td" style="background:var(--accent2)"></span>CrewAI</span>
+        <span class="skill-tag t-ai"><span class="td" style="background:var(--accent2)"></span>Pydantic AI</span>
+        <span class="skill-tag t-ai"><span class="td" style="background:var(--accent2)"></span>MCP Server</span>
+      </div>
+      <div class="skill-group-title"><span></span>ML / Cloud / Tools</div>
+      <div class="tag-cloud">
+        <span class="skill-tag t-ml"><span class="td" style="background:var(--accent)"></span>PyTorch</span>
+        <span class="skill-tag t-ml"><span class="td" style="background:var(--accent)"></span>Scikit-Learn</span>
+        <span class="skill-tag t-ml"><span class="td" style="background:var(--accent)"></span>Keras</span>
+        <span class="skill-tag t-ml"><span class="td" style="background:var(--accent)"></span>Pandas</span>
+        <span class="skill-tag t-ml"><span class="td" style="background:var(--accent)"></span>NumPy</span>
+        <span class="skill-tag t-cloud"><span class="td" style="background:var(--accent5)"></span>AWS</span>
+        <span class="skill-tag t-cloud"><span class="td" style="background:var(--accent5)"></span>Azure</span>
+        <span class="skill-tag t-cloud"><span class="td" style="background:var(--accent5)"></span>Docker</span>
+        <span class="skill-tag t-cloud"><span class="td" style="background:var(--accent5)"></span>FastAPI</span>
+        <span class="skill-tag t-cloud"><span class="td" style="background:var(--accent5)"></span>Streamlit</span>
+        <span class="skill-tag t-iot"><span class="td" style="background:var(--accent4)"></span>OPC UA</span>
+        <span class="skill-tag t-iot"><span class="td" style="background:var(--accent4)"></span>Modbus</span>
+        <span class="skill-tag t-iot"><span class="td" style="background:var(--accent4)"></span>DNP3</span>
+        <span class="skill-tag t-tools"><span class="td" style="background:var(--accent3)"></span>GitHub</span>
+        <span class="skill-tag t-tools"><span class="td" style="background:var(--accent3)"></span>R</span>
+        <span class="skill-tag t-tools"><span class="td" style="background:var(--accent3)"></span>SQL</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTRIBUTION GRAPH ═══ -->
+<section class="reveal">
+  <div class="sec-header">
+    <span class="sec-tag">activity</span>
+    <h2 class="sec-title">Research <span>Activity</span></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="contrib-wrap">
+    <div class="contrib-header">
+      <div class="contrib-stat">
+        <strong id="contrib-count">847</strong> research contributions in the last year
+      </div>
+      <div style="font-size:11px;color:var(--text-dim);font-family:'Courier New',monospace">2020–2026</div>
+    </div>
+    <div class="contrib-months" id="contrib-months"></div>
+    <div class="contrib-grid" id="contrib-grid"></div>
+    <div class="contrib-legend">
+      Less
+      <div class="c-cell c0"></div><div class="c-cell c1"></div>
+      <div class="c-cell c2"></div><div class="c-cell c3"></div>
+      <div class="c-cell c4"></div>
+      More
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROJECTS ═══ -->
+<section id="projects">
+  <div class="sec-header reveal">
+    <span class="sec-tag">05</span>
+    <h2 class="sec-title">Featured <span>Projects</span></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="projects-grid stagger">
+
+    <div class="proj-card p-cyber">
+      <div class="proj-top">
+        <span class="proj-emoji">🛡️</span>
+        <span class="eu-badge">EU · €2.5M</span>
+      </div>
+      <div class="proj-name">ROSSANA</div>
+      <div class="proj-desc">Cyber Threat Hunting using AI Agents (LLM-Driven). Developed an AI agent using Flowise and a one-prompt LLM to perform cyber threat detection on log data collected from medical devices across the Liguria region.</div>
+      <div class="proj-foot">
+        <div class="proj-tags"><span class="ptag">LLM</span><span class="ptag">AI Agents</span><span class="ptag">Cybersecurity</span></div>
+      </div>
+    </div>
+
+    <div class="proj-card p-eu">
+      <div class="proj-top">
+        <span class="proj-emoji">⛑️</span>
+        <span class="eu-badge">EU · €2.9M</span>
+      </div>
+      <div class="proj-name">WeldWise</div>
+      <div class="proj-desc">Multimodal Smart Helmet Assistant for Welders. Built a smart helmet integrating sensor, text, audio, and video data with an LLM-based multimodal chatbot to guide welders in real-time.</div>
+      <div class="proj-foot">
+        <div class="proj-tags"><span class="ptag">Multimodal</span><span class="ptag">LLM</span><span class="ptag">IoT</span></div>
+      </div>
+    </div>
+
+    <div class="proj-card p-eu">
+      <div class="proj-top">
+        <span class="proj-emoji">🌊</span>
+        <span class="eu-badge">EU · €3.2M</span>
+      </div>
+      <div class="proj-name">NEPTUN</div>
+      <div class="proj-desc">LLM-Powered Underwater 3D Reconstruction Assistant. Developed an LLM-based chatbot for interaction with visual and spatial data to support marine scientists in underwater reconstruction.</div>
+      <div class="proj-foot">
+        <div class="proj-tags"><span class="ptag">3D Vision</span><span class="ptag">LLM</span><span class="ptag">Marine AI</span></div>
+      </div>
+    </div>
+
+    <div class="proj-card p-llm">
+      <div class="proj-top">
+        <span class="proj-emoji">🤖</span>
+        <span class="eu-badge">EU · €1.23M</span>
+      </div>
+      <div class="proj-name">Admin Task Automation</div>
+      <div class="proj-desc">Automated repetitive administrative tasks using Language Modelling. EU funded project reducing manual overhead through intelligent NLP pipelines.</div>
+      <div class="proj-foot">
+        <div class="proj-tags"><span class="ptag">NLP</span><span class="ptag">Automation</span><span class="ptag">LLM</span></div>
+      </div>
+    </div>
+
+    <div class="proj-card p-llm">
+      <div class="proj-top"><span class="proj-emoji">🏥</span></div>
+      <div class="proj-name">ClinicalTrials-LLM-Chatbot</div>
+      <div class="proj-desc">Designed and implemented a ClinicalTrial ChatBot utilizing LLM and Langchain, streamlining data analysis for clinical trial reports with RAG-based document retrieval.</div>
+      <div class="proj-foot">
+        <div class="proj-tags"><span class="ptag">LangChain</span><span class="ptag">RAG</span><span class="ptag">Clinical</span></div>
+        <a href="https://github.com/aadilganigaie/ClinicalTrials-LLM-Chatbot" target="_blank" class="proj-link">⎋ GitHub</a>
+      </div>
+    </div>
+
+    <div class="proj-card p-nlp">
+      <div class="proj-top"><span class="proj-emoji">📄</span></div>
+      <div class="proj-name">PDFChatBot</div>
+      <div class="proj-desc">A PDF interaction tool powered by LangChain and LLM for natural language querying and document summarization across multiple PDFs simultaneously.</div>
+      <div class="proj-foot">
+        <div class="proj-tags"><span class="ptag">LangChain</span><span class="ptag">LLM</span><span class="ptag">QA</span></div>
+        <a href="https://github.com/aadilganigaie/LangchainLLMwithmultiplePdfs" target="_blank" class="proj-link">⎋ GitHub</a>
+      </div>
+    </div>
+
+    <div class="proj-card p-nlp">
+      <div class="proj-top"><span class="proj-emoji">🧠</span></div>
+      <div class="proj-name">MindCheck</div>
+      <div class="proj-desc">Mental Health Detection powered by GPT-2 and LangChain LLM. Deployed on Streamlit, offers intuitive interface for text-based mental health predictions.</div>
+      <div class="proj-foot">
+        <div class="proj-tags"><span class="ptag">GPT-2</span><span class="ptag">Mental Health</span><span class="ptag">NLP</span></div>
+        <a href="https://github.com/aadilganigaie/Mental_Health_NLP" target="_blank" class="proj-link">⎋ GitHub</a>
+      </div>
+    </div>
+
+    <div class="proj-card p-nlp">
+      <div class="proj-top"><span class="proj-emoji">🚫</span></div>
+      <div class="proj-name">Spam Classifier</div>
+      <div class="proj-desc">ML-based spam classifier deployed on Streamlit. Involves data preprocessing, feature engineering, model selection and evaluation for binary message classification.</div>
+      <div class="proj-foot">
+        <div class="proj-tags"><span class="ptag">ML</span><span class="ptag">NLP</span><span class="ptag">Streamlit</span></div>
+        <a href="https://github.com/aadilganigaie/SpamClassifier" target="_blank" class="proj-link">⎋ GitHub</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ PUBLICATIONS ═══ -->
+<section id="publications">
+  <div class="sec-header reveal">
+    <span class="sec-tag">06</span>
+    <h2 class="sec-title">Publications</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="pub-filters reveal">
+    <button class="pub-filter-btn active" onclick="filterPubs('all',this)">All (15)</button>
+    <button class="pub-filter-btn" onclick="filterPubs('scopus',this)">Scopus Indexed</button>
+    <button class="pub-filter-btn" onclick="filterPubs('2025',this)">2025</button>
+    <button class="pub-filter-btn" onclick="filterPubs('2024',this)">2024</button>
+    <button class="pub-filter-btn" onclick="filterPubs('2023',this)">2023</button>
+  </div>
+  <div class="pub-list stagger" id="pub-list">
+
+    <div class="pub-card" data-year="2025" data-type="preprint">
+      <div class="pub-year">2025</div>
+      <div>
+        <div class="pub-title">Uncertainty in Authorship: Why Perfect AI Detection Is Mathematically Impossible</div>
+        <div class="pub-meta">Aadil Ganie · <span class="pub-journal">Cornell University (arXiv)</span> <span class="pub-badge pb-preprint">Preprint</span></div>
+      </div>
+    </div>
+
+    <div class="pub-card" data-year="2025" data-type="preprint">
+      <div class="pub-year">2025</div>
+      <div>
+        <div class="pub-title">Securing AI Agents: Implementing Role-Based Access Control for Industrial Applications</div>
+        <div class="pub-meta">Aadil Ganie · <span class="pub-journal">Cornell University (arXiv)</span> <span class="pub-badge pb-preprint">Preprint</span></div>
+      </div>
+    </div>
+
+    <div class="pub-card" data-year="2024" data-type="scopus">
+      <div class="pub-year">2024</div>
+      <div>
+        <div class="pub-title">Exploring noise-induced techniques to strengthen deep learning model resilience</div>
+        <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Pollack Periodica 19(3)</span> <span class="pub-badge pb-scopus">Scopus</span> <span class="pub-badge pb-if">SJR 0.385</span></div>
+      </div>
+    </div>
+
+    <div class="pub-card" data-year="2024" data-type="scopus">
+      <div class="pub-year">2024</div>
+      <div>
+        <div class="pub-title">Enhancing Early Cancer Detection: An Investigation of DNA Sequences and Machine Learning</div>
+        <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Iraqi Journal of Science 65(8)</span> <span class="pub-badge pb-scopus">Scopus</span> <span class="pub-badge pb-if">SJR 0.341</span></div>
+      </div>
+    </div>
+
+    <div class="pub-card" data-year="2023" data-type="scopus">
+      <div class="pub-year">2023</div>
+      <div>
+        <div class="pub-title">From big data to smart data: a sample gradient descent approach for machine learning</div>
+        <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Journal of Big Data 10(1) – Springer Nature</span> <span class="pub-badge pb-scopus">Scopus</span> <span class="pub-badge pb-if">IF 13.4</span></div>
+      </div>
+    </div>
+
+    <div class="pub-card" data-year="2023" data-type="journal">
+      <div class="pub-year">2023</div>
+      <div>
+        <div class="pub-title">Exploring the Impact of Informal Language on Sentiment Analysis Models for Social Media Text Using CNN</div>
+        <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Multidiszciplináris tudományok 13(1)</span></div>
+      </div>
+    </div>
+
+    <div class="pub-card" data-year="2023" data-type="preprint">
+      <div class="pub-year">2023</div>
+      <div>
+        <div class="pub-title">Social Media Posts as a Window into Mental Health: A Machine Learning Approach</div>
+        <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Preprint</span> <span class="pub-badge pb-preprint">Preprint</span></div>
+      </div>
+    </div>
+
+    <div class="pub-card" data-year="2022" data-type="scopus">
+      <div class="pub-year">2022</div>
+      <div>
+        <div class="pub-title">Identification of online harassment using ensemble fine-tuned pre-trained BERT</div>
+        <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Pollack Periodica 17(3)</span> <span class="pub-badge pb-scopus">Scopus</span> <span class="pub-badge pb-if">SJR 0.385</span></div>
+      </div>
+    </div>
+
+    <div class="pub-card" data-year="2022" data-type="journal">
+      <div class="pub-year">2022</div>
+      <div>
+        <div class="pub-title">Traditional or deep learning for sentiment analysis: A review</div>
+        <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Multidiszciplináris tudományok 12(1)</span></div>
+      </div>
+    </div>
+
+    <div class="pub-card" data-year="2022" data-type="journal">
+      <div class="pub-year">2022</div>
+      <div>
+        <div class="pub-title">An Approach to Implementation of Autoencoders in Intelligent Vehicles</div>
+        <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Springer Nature – VAE 2022</span></div>
+      </div>
+    </div>
+
+    <div class="pub-card" data-year="2021" data-type="scopus">
+      <div class="pub-year">2021</div>
+      <div>
+        <div class="pub-title">Detection Of Semantic Obsessive Text In Multimedia Using Machine And Deep Learning</div>
+        <div class="pub-meta">Aadil Ganie et al. · <span class="pub-journal">JATIT 99(11)</span> <span class="pub-badge pb-scopus">Scopus</span></div>
+      </div>
+    </div>
+
+    <div class="pub-card" data-year="2021" data-type="journal">
+      <div class="pub-year">2021</div>
+      <div>
+        <div class="pub-title">Sentiment analysis on the effect of trending source-less News</div>
+        <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Springer Nature – AISC Conference</span></div>
+      </div>
+    </div>
+
+    <div class="pub-card" data-year="2021" data-type="journal">
+      <div class="pub-year">2021</div>
+      <div>
+        <div class="pub-title">Covid-19 Situation In Hungary Using Time Series Analysis</div>
+        <div class="pub-meta">Aadil Ganie et al. · <span class="pub-journal">RGN Advances in Communication Technology</span></div>
+      </div>
+    </div>
+
+    <div class="pub-card" data-year="2020" data-type="journal">
+      <div class="pub-year">2020</div>
+      <div>
+        <div class="pub-title">Analyzing and predicting spear-phishing using machine learning methods</div>
+        <div class="pub-meta">Aadil Ganie, Samad Dadvandipour · <span class="pub-journal">Multidiszciplináris tudományok 10(4)</span></div>
+      </div>
+    </div>
+
+    <div class="pub-card" data-year="2018" data-type="scopus">
+      <div class="pub-year">2018</div>
+      <div>
+        <div class="pub-title">Enterprise Information Technology Governance: Insights from India Listed Companies</div>
+        <div class="pub-meta">Aadil Gani Ganie et al. · <span class="pub-journal">Asian Journal of Information Technology 17(6)</span> <span class="pub-badge pb-scopus">Scopus</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ AWARDS ═══ -->
+<section id="awards">
+  <div class="sec-header reveal">
+    <span class="sec-tag">07</span>
+    <h2 class="sec-title">Honours &amp; <span>Awards</span></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="awards-grid stagger">
+    <div class="award-card">
+      <span class="award-emoji">🎖️</span>
+      <div class="award-title">Stipendium Hungaricum PhD Fellowship</div>
+      <div class="award-org">University of Miskolc / EU Funded</div>
+      <div class="award-year">Sep 2020</div>
+    </div>
+    <div class="award-card">
+      <span class="award-emoji">🌐</span>
+      <div class="award-title">International Student &amp; Faculty Coordinator</div>
+      <div class="award-org">University of Miskolc</div>
+      <div class="award-year">During PhD</div>
+    </div>
+    <div class="award-card">
+      <span class="award-emoji">🏆</span>
+      <div class="award-title">Chinese National PhD Fellowship</div>
+      <div class="award-org">HIT (Harbin Institute of Technology)</div>
+      <div class="award-year">International Fellowship</div>
+    </div>
+    <div class="award-card">
+      <span class="award-emoji">🧱</span>
+      <div class="award-title">European Youth Project "Let's Brick"</div>
+      <div class="award-org">Lavaur, France</div>
+      <div class="award-year">28-day Volunteering</div>
+    </div>
+    <div class="award-card">
+      <span class="award-emoji">🏰</span>
+      <div class="award-title">European Youth Project "Veseli Castle"</div>
+      <div class="award-org">Pocinovica, Czech Republic</div>
+      <div class="award-year">14-day Volunteering</div>
+    </div>
+    <div class="award-card">
+      <span class="award-emoji">📖</span>
+      <div class="award-title">Supervision of Master Theses</div>
+      <div class="award-org">Fake News &amp; Hate Speech Detection using LLMs</div>
+      <div class="award-year">2 Theses Supervised</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ INTERACTIVE TERMINAL ═══ -->
+<section class="reveal">
+  <div class="sec-header">
+    <span class="sec-tag">terminal</span>
+    <h2 class="sec-title">Interactive <span>Terminal</span></h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="terminal-section">
+    <div class="term-bar">
+      <div class="term-dot td-red"></div>
+      <div class="term-dot td-yellow"></div>
+      <div class="term-dot td-green"></div>
+      <div class="term-title">bash — aadil@kfupm:~ (type 'help' for commands)</div>
+    </div>
+    <div class="term-body" id="term-output">
+      <div class="term-line"><span class="tp">aadil@kfupm</span><span class="tm">:</span><span class="tv">~</span><span class="tm"> $ </span><span class="tc">whoami</span></div>
+      <div style="margin:4px 0 12px;color:var(--text)">Dr. Aadil Gani Ganie — Postdoctoral Research Fellow · NLP · LLMs · AI Agents</div>
+    </div>
+    <div class="term-body" style="padding-top:0;border-top:1px solid var(--border)">
+      <div class="term-input-row">
+        <span class="tp">aadil@kfupm</span><span class="tm">:</span><span class="tv">~</span><span class="tm"> $ </span>
+        <input type="text" id="term-input" placeholder="type a command..." autocomplete="off" spellcheck="false">
+      </div>
+      <div class="term-hint">try: help · publications · skills · contact · projects · clear</div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /wrapper -->
 
 <!-- FOOTER -->
 <footer>
   <div class="wrapper">
-    <div class="footer-brand">
-      <span>~/aadil-ganie</span> · Built with ❤️ and code
+    <div class="footer-name"><span>~/aadil-ganie</span> · Built with code &amp; curiosity</div>
+    <div class="footer-links">
+      <a href="https://github.com/aadilganigaie" target="_blank">GitHub</a>
+      <a href="https://www.linkedin.com/in/aadil-gani-ganie-1b0199102/" target="_blank">LinkedIn</a>
+      <a href="mailto:aadilganiganie@gmail.com">Email</a>
+      <a href="tel:+966502051352">+966 502051352</a>
     </div>
-    <div class="footer-tech">
-      Powered by <span>HTML · CSS · Vanilla JS</span> · Hosted on <span>GitHub Pages</span>
-    </div>
-    <div style="margin-top:12px;font-size:11px;color:var(--text-muted);font-family:'Courier New',monospace">
-      © 2026 Dr. Aadil Gani Ganie · All rights reserved
-    </div>
+    <div class="footer-copy">© 2026 Dr. Aadil Gani Ganie · All rights reserved · HTML · CSS · Vanilla JS · GitHub Pages</div>
   </div>
 </footer>
 
 <script>
-/* ── MATRIX RAIN ── */
+/* ════════════════════════════════
+   CURSOR
+════════════════════════════════ */
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing)})();
+document.querySelectorAll('a,button,input,.exp-card,.proj-card,.award-card,.bento-card,.edu-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';cur.style.background='var(--accent2)';ring.style.width='60px';ring.style.height='60px';ring.style.borderColor='rgba(188,140,255,0.4)'});
+  el.addEventListener('mouseleave',()=>{cur.style.width='12px';cur.style.height='12px';cur.style.background='var(--accent)';ring.style.width='40px';ring.style.height='40px';ring.style.borderColor='rgba(88,166,255,0.5)'});
+});
+
+/* ════════════════════════════════
+   SCROLL PROGRESS & NAV
+════════════════════════════════ */
+const bar=document.getElementById('scroll-progress');
+const nav=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{
+  const pct=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100;
+  bar.style.width=pct+'%';
+  nav.classList.toggle('scrolled',window.scrollY>40);
+},{passive:true});
+
+/* ════════════════════════════════
+   MATRIX RAIN
+════════════════════════════════ */
 (function(){
-  const canvas = document.getElementById('matrix-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, cols, drops;
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*(){}[]<>/\\|LLMNLPAIMLPythonGPT';
-  function init(){
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-    cols = Math.floor(W / 14);
-    drops = Array(cols).fill(1);
-  }
+  const cv=document.getElementById('matrix-canvas');
+  const ctx=cv.getContext('2d');
+  let W,H,cols,drops;
+  const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789αβγδεζηθLLMNLPAIMLPythonGPT∇∑∫∂';
+  function init(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;cols=Math.floor(W/14);drops=Array(cols).fill(1)}
   function draw(){
-    ctx.fillStyle = 'rgba(13,17,23,0.05)';
-    ctx.fillRect(0,0,W,H);
-    ctx.fillStyle = '#3fb950';
-    ctx.font = '12px Courier New';
+    ctx.fillStyle='rgba(5,7,9,0.05)';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#3fb950';ctx.font='12px Courier New';
     drops.forEach((y,i)=>{
-      const ch = chars[Math.floor(Math.random()*chars.length)];
-      ctx.fillText(ch, i*14, y*14);
-      if(y*14 > H && Math.random() > 0.975) drops[i] = 0;
-      drops[i]++;
+      ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*14,y*14);
+      if(y*14>H&&Math.random()>0.975)drops[i]=0;drops[i]++;
     });
   }
-  init();
-  window.addEventListener('resize', init);
-  setInterval(draw, 40);
+  init();window.addEventListener('resize',init);setInterval(draw,40);
 })();
 
-/* ── PARTICLES ── */
+/* ════════════════════════════════
+   TYPING ANIMATION
+════════════════════════════════ */
 (function(){
-  const bg = document.getElementById('particles-bg');
-  const colors = ['#58a6ff','#bc8cff','#3fb950','#e3b341','#f78166'];
-  for(let i=0;i<20;i++){
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const size = Math.random()*6+2;
-    p.style.cssText = `
-      width:${size}px;height:${size}px;
-      left:${Math.random()*100}%;
-      background:${colors[Math.floor(Math.random()*colors.length)]};
-      animation-duration:${Math.random()*20+10}s;
-      animation-delay:${Math.random()*10}s;
-    `;
-    bg.appendChild(p);
+  const el=document.getElementById('typed-text');
+  const words=['NLP & Sentiment Analysis Researcher','LLM & AI Agent Developer','HPC & Systems Optimizer','Cybersecurity AI Specialist','Postdoctoral Research Fellow'];
+  let wi=0,ci=0,del=false;
+  function type(){
+    const w=words[wi];
+    el.textContent=del?w.slice(0,ci--):w.slice(0,ci++);
+    if(!del&&ci>w.length){del=true;setTimeout(type,1400);return}
+    if(del&&ci<0){del=false;wi=(wi+1)%words.length;ci=0}
+    setTimeout(type,del?40:80);
   }
+  type();
 })();
 
-/* ── COUNTER ANIMATION ── */
-function animateCounters(){
+/* ════════════════════════════════
+   COUNTERS
+════════════════════════════════ */
+function runCounters(){
   document.querySelectorAll('.counter').forEach(el=>{
-    const target = +el.dataset.target;
-    let cur = 0;
-    const step = target / 40;
-    const timer = setInterval(()=>{
-      cur = Math.min(cur+step, target);
-      el.textContent = Math.floor(cur);
-      if(cur >= target) clearInterval(timer);
-    }, 40);
+    const t=+el.dataset.target;let c=0;const s=t/50;
+    const timer=setInterval(()=>{c=Math.min(c+s,t);el.textContent=Math.floor(c);if(c>=t)clearInterval(timer)},30);
   });
 }
-window.addEventListener('load', animateCounters);
+let countersRan=false;
 
-/* ── SCROLL REVEAL ── */
-const observer = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
-},{threshold:0.08});
-document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
-
-/* ── TIMELINE STAGGER ── */
-const timelineObs = new IntersectionObserver(entries=>{
+/* ════════════════════════════════
+   INTERSECTION OBSERVER — REVEAL
+════════════════════════════════ */
+const io=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.querySelectorAll('.timeline-item').forEach((item,i)=>{
-        item.style.animationDelay = `${i*0.1}s`;
-        item.style.opacity = '1';
-      });
-    }
+    if(!e.isIntersecting)return;
+    e.target.classList.add('in');
+    if(e.target.classList.contains('stats-strip')&&!countersRan){countersRan=true;runCounters()}
+    io.unobserve(e.target);
   });
-},{threshold:0.05});
-document.querySelectorAll('.timeline').forEach(el=>timelineObs.observe(el));
+},{threshold:0.08});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale,.stagger').forEach(el=>io.observe(el));
+// also observe stats strip
+io.observe(document.querySelector('.stats-strip'));
 
-/* ── EXP TOGGLE ── */
+/* ════════════════════════════════
+   SKILL BARS
+════════════════════════════════ */
+const skillIo=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    document.querySelectorAll('.skill-bar-fill').forEach(bar=>{
+      bar.style.width=bar.dataset.width+'%';
+    });
+    skillIo.disconnect();
+  });
+},{threshold:0.2});
+const skillSection=document.getElementById('skills');
+if(skillSection)skillIo.observe(skillSection);
+
+/* ════════════════════════════════
+   3D TILT on PROJ CARDS
+════════════════════════════════ */
+document.querySelectorAll('.proj-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-0.5;
+    const y=(e.clientY-r.top)/r.height-0.5;
+    card.style.transform=`translateY(-6px) rotateY(${x*10}deg) rotateX(${-y*6}deg)`;
+  });
+  card.addEventListener('mouseleave',()=>{card.style.transform=''});
+});
+
+/* ════════════════════════════════
+   EXP TOGGLE
+════════════════════════════════ */
 function toggleExp(card){
-  const details = card.querySelector('.exp-details');
-  const toggle  = card.querySelector('.exp-toggle');
-  const open    = details.classList.toggle('open');
-  toggle.textContent = open ? '▼ collapse' : '▶ expand details';
+  const d=card.querySelector('.exp-details');
+  const b=card.querySelector('.exp-toggle-btn');
+  const open=d.classList.toggle('open');
+  b.classList.toggle('open',open);
+  b.querySelector('.toggle-arrow').textContent=open?'▼':'▶';
+  b.childNodes[1].textContent=open?' collapse':' expand details';
 }
 
-/* ── CONTRIBUTION GRAPH ── */
+/* ════════════════════════════════
+   ACTIVE NAV
+════════════════════════════════ */
+const secs=document.querySelectorAll('section[id]');
+const nls=document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll',()=>{
+  let cur2='';
+  secs.forEach(s=>{if(window.scrollY>=s.offsetTop-120)cur2=s.id});
+  nls.forEach(a=>{a.classList.toggle('active',a.getAttribute('href')==='#'+cur2)});
+},{passive:true});
+
+/* ════════════════════════════════
+   CONTRIBUTION GRAPH
+════════════════════════════════ */
 (function(){
-  const grid = document.getElementById('contrib-grid');
-  const weeks = 52;
-  const levels = [0,0,0,0,1,1,2,2,3,4];
-  // Simulate research activity peaks
-  const hotWeeks = [8,9,10,20,21,22,30,31,32,33,40,41,42,43,50,51];
+  const grid=document.getElementById('contrib-grid');
+  const months=document.getElementById('contrib-months');
+  const weeks=52;
+  const hot=[8,9,10,20,21,22,30,31,32,33,40,41,42,43,50,51];
+  const lvls=[0,0,0,1,1,2,3];
+  const mnames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  // month labels
+  for(let i=0;i<12;i++){const s=document.createElement('span');s.className='contrib-month-label';s.textContent=mnames[i];months.appendChild(s)}
   for(let w=0;w<weeks;w++){
-    const col = document.createElement('div');
-    col.className = 'contrib-col';
+    const col=document.createElement('div');col.className='contrib-col';
     for(let d=0;d<7;d++){
-      const cell = document.createElement('div');
-      let lvl;
-      if(hotWeeks.includes(w) && Math.random()>0.3){ lvl=3+Math.floor(Math.random()*2); }
-      else { lvl=levels[Math.floor(Math.random()*levels.length)]; }
-      cell.className = `contrib-cell c${lvl}`;
-      const pubs = lvl===0?'No activity':lvl===1?'Light research':lvl===2?'Moderate work':lvl===3?'Heavy research':'Publication submitted!';
-      cell.setAttribute('data-tip', pubs);
+      const cell=document.createElement('div');
+      let lvl=hot.includes(w)&&Math.random()>0.25?3+Math.floor(Math.random()*2):lvls[Math.floor(Math.random()*lvls.length)];
+      cell.className=`c-cell c${lvl}`;
+      const tip=['No activity','Light research','Moderate work','Active research','Publication day!'][lvl];
+      cell.setAttribute('data-tip',tip);
       col.appendChild(cell);
     }
     grid.appendChild(col);
   }
 })();
 
-/* ── ACTIVE NAV ── */
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-links a');
-window.addEventListener('scroll',()=>{
-  let cur = '';
-  sections.forEach(s=>{ if(window.scrollY >= s.offsetTop-100) cur=s.id; });
-  navLinks.forEach(a=>{
-    a.style.color = a.getAttribute('href')==='#'+cur ? 'var(--accent)' : '';
+/* ════════════════════════════════
+   PUBLICATION FILTER
+════════════════════════════════ */
+function filterPubs(filter,btn){
+  document.querySelectorAll('.pub-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.pub-card').forEach(card=>{
+    let show=false;
+    if(filter==='all')show=true;
+    else if(filter==='scopus')show=card.dataset.type==='scopus';
+    else show=card.dataset.year===filter;
+    card.classList.toggle('hidden',!show);
   });
-},{ passive:true });
+}
+
+/* ════════════════════════════════
+   INTERACTIVE TERMINAL
+════════════════════════════════ */
+const termOut=document.getElementById('term-output');
+const termIn=document.getElementById('term-input');
+const DB={
+  help:`<span class="tm">Available commands:</span>
+  <span class="tv">whoami</span>      — about Dr. Aadil Ganie
+  <span class="tv">skills</span>      — list technical skills
+  <span class="tv">publications</span>— list publications
+  <span class="tv">projects</span>    — list projects
+  <span class="tv">contact</span>     — contact information
+  <span class="tv">education</span>   — academic background
+  <span class="tv">experience</span>  — work history
+  <span class="tv">clear</span>       — clear terminal`,
+  whoami:`<span class="tm">Name:</span>    Dr. Aadil Gani Ganie
+<span class="tm">Role:</span>    Postdoctoral Research Fellow
+<span class="tm">Inst:</span>    KFUPM · IRC IMR, Saudi Arabia
+<span class="tm">Also:</span>    Postdoc @ UPV, Spain
+<span class="tm">Focus:</span>   LLMs · NLP · AI Agents · HPC · Cybersecurity
+<span class="tm">Pubs:</span>    15+ across Scopus, Springer, arXiv`,
+  skills:`<span class="tm">Core:</span>    LLMs · NLP · Transformers · HuggingFace · LangChain
+<span class="tm">Agents:</span>  Flowise · CrewAI · Pydantic AI · MCP Server · RAG
+<span class="tm">ML/DL:</span>  PyTorch · Keras · Scikit-Learn · Pandas · NumPy
+<span class="tm">Cloud:</span>   AWS · Azure · Docker · FastAPI · Streamlit
+<span class="tm">IoT:</span>     OPC UA · Modbus · DNP3 · Profibus · WoT
+<span class="tm">Lang:</span>    Python · R · SQL · HTML/CSS/JS`,
+  publications:`<span class="ts">2025</span> → Uncertainty in Authorship: Why Perfect AI Detection Is Impossible
+<span class="ts">2025</span> → Securing AI Agents: Role-Based Access Control for Industrial Apps
+<span class="ts">2024</span> → Noise-induced techniques for deep learning resilience [Scopus]
+<span class="ts">2024</span> → DNA Sequences &amp; ML for Early Cancer Detection [Scopus]
+<span class="ts">2023</span> → Big data to smart data: gradient descent for ML [Scopus IF 13.4]
+<span class="tm">     ··· and 10 more. See Publications section above.</span>`,
+  projects:`<span class="tv">ROSSANA</span>     — EU €2.5M · AI cyber threat hunting on medical devices
+<span class="tv">WeldWise</span>     — EU €2.9M · Multimodal smart helmet for welders
+<span class="tv">NEPTUN</span>       — EU €3.2M · LLM-powered underwater 3D reconstruction
+<span class="tv">Admin-LLM</span>    — EU €1.23M · Admin task automation with NLP
+<span class="tv">ClinicalBot</span>  — LangChain RAG chatbot for clinical trials
+<span class="tv">MindCheck</span>    — GPT-2 mental health detection on Streamlit`,
+  contact:`<span class="tm">Email:</span>   aadilganiganie@gmail.com
+<span class="tm">Phone:</span>   +966 502051352
+<span class="tm">GitHub:</span>  github.com/aadilganigaie
+<span class="tm">LinkedIn:</span>linkedin.com/in/aadil-gani-ganie-1b0199102/
+<span class="tm">Location:</span>Dhahran, Saudi Arabia`,
+  education:`<span class="ts">PhD</span>     Computer Science · Univ. of Miskolc · 2020–2024
+           Thesis: Sentiment Analysis &amp; NLP on Social Media
+<span class="ts">MCA</span>     Master of Computer Applications · Pondicherry Univ. · 2015–2018
+<span class="ts">BSc</span>     Information Technology · Univ. of Kashmir · 2012–2015`,
+  experience:`<span class="tv">CURRENT</span> Postdoc · KFUPM, Saudi Arabia (Apr 2026–)
+<span class="tv">CURRENT</span> Postdoc · UPV, Spain (Apr 2025–)
+<span class="ts">2024–25</span> Research Postdoc · Univ. of Genoa, Italy
+<span class="ts">2024</span>    Data Scientist · Planimetere Kft., Budapest
+<span class="ts">2021–23</span> Teaching Assistant · Univ. of Miskolc
+<span class="ts">2018–20</span> IT Support · Juggernaut Books, New Delhi`,
+};
+function termWrite(cmd,resp){
+  const line=document.createElement('div');
+  line.innerHTML=`<div class="term-line"><span class="tp">aadil@kfupm</span><span class="tm">:</span><span class="tv">~</span><span class="tm"> $ </span><span class="tc">${cmd}</span></div><div style="color:var(--text);white-space:pre-wrap;padding:4px 0 12px;font-size:12px;line-height:1.8">${resp}</div>`;
+  termOut.appendChild(line);
+  termOut.scrollTop=termOut.scrollHeight;
+}
+termIn.addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  const cmd=termIn.value.trim().toLowerCase();
+  termIn.value='';
+  if(!cmd)return;
+  if(cmd==='clear'){termOut.innerHTML='';return}
+  const resp=DB[cmd]||`<span class="tm">Command not found: <span style="color:var(--accent4)">${cmd}</span> · type <span class="tv">help</span> for available commands</span>`;
+  termWrite(cmd,resp);
+});
+termIn.addEventListener('click',()=>termIn.focus());
 </script>
 </body>
 </html>
